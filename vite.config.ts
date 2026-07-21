@@ -21,6 +21,7 @@ export default defineConfig(() => {
           dashboard: path.resolve(__dirname, 'applicant-dashboard.html'),
           application: path.resolve(__dirname, 'admission-application.html'),
           review: path.resolve(__dirname, 'application-review.html'),
+          adminReview: path.resolve(__dirname, 'admin-admission-review.html'),
         },
       },
     },
