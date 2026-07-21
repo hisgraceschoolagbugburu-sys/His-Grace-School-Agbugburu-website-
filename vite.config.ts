@@ -28,6 +28,8 @@ export default defineConfig(() => {
           studentPortal: path.resolve(__dirname, 'student-portal.html'),
           teacherLogin: path.resolve(__dirname, 'teacher-login.html'),
           teacherPortal: path.resolve(__dirname, 'teacher-portal.html'),
+          adminLogin: path.resolve(__dirname, 'admin-login.html'),
+          adminPortal: path.resolve(__dirname, 'admin-portal.html'),
         },
       },
     },
