@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Verification | His Grace School Agbugburu</title>
+  
+  <!-- SEO & Meta Description -->
+  <meta name="description" content="Verify an applicant or student record using the official His Grace School Agbugburu verification system.">
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* Custom Styling for QR Verification Portal */
+    .qr-portal-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    /* Verification Methods Grid */
+    .verification-methods-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+    }
+
+    @media (max-width: 868px) {
+      .verification-methods-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Card Box Base */
+    .method-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .method-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .method-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background-color: rgba(18, 62, 124, 0.08);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .method-card-header h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.15rem;
+    }
+
+    .method-card-header p {
+      font-size: 0.825rem;
+      color: var(--text-muted);
+    }
+
+    /* Option 1: Camera Scanner Visual Box */
+    .camera-placeholder-box {
+      background: #0B192C;
+      border-radius: var(--radius-md);
+      height: 240px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed rgba(212, 175, 55, 0.4);
+      overflow: hidden;
+      color: #94A3B8;
+      text-align: center;
+      padding: 1.5rem;
+    }
+
+    /* Animated Scanner Frame */
+    .scanner-viewfinder {
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      border: 2px solid rgba(212, 175, 55, 0.6);
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+    }
+
+    .scanner-corner {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-color: var(--accent);
+      border-style: solid;
+    }
+
+    .corner-tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-top-left-radius: 6px; }
+    .corner-tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; border-top-right-radius: 6px; }
+    .corner-bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; border-bottom-left-radius: 6px; }
+    .corner-br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-bottom-right-radius: 6px; }
+
+    /* Scanning line animation */
+    .scanner-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      box-shadow: 0 0 8px var(--accent);
+      animation: scanMove 2.5s infinite ease-in-out;
+    }
+
+    @keyframes scanMove {
+      0% { top: 10px; opacity: 0.3; }
+      50% { top: 140px; opacity: 1; }
+      100% { top: 10px; opacity: 0.3; }
+    }
+
+    .camera-notice-badge {
+      position: relative;
+      z-index: 2;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #F1F5F9;
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .camera-notice-badge span {
+      width: 8px;
+      height: 8px;
+      background-color: #F59E0B;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #F59E0B;
+    }
+
+    /* Sample ID Pills */
+    .sample-pills-wrap {
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .sample-pill {
+      font-size: 0.75rem;
+      padding: 0.3rem 0.65rem;
+      background-color: var(--secondary-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      color: var(--primary);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      font-family: monospace;
+    }
+
+    .sample-pill:hover {
+      background-color: var(--primary);
+      color: var(--white);
+      border-color: var(--primary);
+    }
+
+    /* Verification Result Card Styling */
+    .result-section {
+      transition: var(--transition-smooth);
+    }
+
+    .result-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .result-card.verified-state {
+      border-top: 5px solid #10B981;
+    }
+
+    .result-card.invalid-state {
+      border-top: 5px solid #EF4444;
+    }
+
+    .result-card-header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      background: var(--secondary-bg);
+    }
+
+    .result-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.3px;
+    }
+
+    .result-status-badge.verified {
+      background-color: #D1FAE5;
+      color: #065F46;
+      border: 1.5px solid #A7F3D0;
+    }
+
+    .result-status-badge.invalid {
+      background-color: #FEE2E2;
+      color: #991B1B;
+      border: 1.5px solid #FCA5A5;
+    }
+
+    .result-card-body {
+      padding: 2.25rem 2rem;
+    }
+
+    .verified-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .verified-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .verified-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .verified-value {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Watermark Seal Effect */
+    .watermark-seal {
+      position: absolute;
+      right: 2rem;
+      bottom: 1.5rem;
+      opacity: 0.06;
+      pointer-events: none;
+      width: 160px;
+      height: 160px;
+    }
+
+    /* Invalid State Box */
+    .invalid-box {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .invalid-icon-wrap {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background-color: #FEE2E2;
+      color: #EF4444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem auto;
+      border: 2px solid #FCA5A5;
+    }
+
+    .invalid-box h3 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #991B1B;
+      margin-bottom: 0.5rem;
+    }
+
+    .invalid-box p {
+      color: var(--text-dark);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Future QR Locations Cards Grid */
+    .future-locations-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .location-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition-smooth);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .location-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(212, 175, 55, 0.4);
+    }
+
+    .location-icon-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      background-color: rgba(212, 175, 55, 0.12);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .location-card h4 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .location-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Administrator Preparation Section */
+    .admin-prep-card {
+      background: #0F172A;
+      color: #F8FAFC;
+      border-radius: var(--radius-lg);
+      padding: 2.25rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .admin-prep-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .admin-prep-header h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .admin-badge {
+      background-color: rgba(212, 175, 55, 0.2);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .admin-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1rem;
+    }
+
+    .admin-action-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      color: #94A3B8;
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: not-allowed;
+      opacity: 0.65;
+      transition: var(--transition-fast);
+      position: relative;
+    }
+
+    .admin-action-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #CBD5E1;
+    }
+
+    .disabled-tag {
+      position: absolute;
+      right: 0.75rem;
+      top: 0.5rem;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      background: rgba(239, 68, 68, 0.2);
+      color: #FCA5A5;
+      padding: 0.15rem 0.4rem;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+    }
+
+    /* Security Notice Box */
+    .security-notice-card {
+      background: linear-gradient(135deg, rgba(18, 62, 124, 0.05) 0%, rgba(212, 175, 55, 0.08) 100%);
+      border: 1.5px solid rgba(212, 175, 55, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
+    }
+
+    .security-shield-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      background: var(--primary);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(18, 62, 124, 0.2);
+    }
+
+    .security-content h4 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.35rem;
+    }
+
+    .security-content p {
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================= -->
+  <!-- HEADER & NAVIGATION                                       -->
+  <!-- ========================================================= -->
+  <header id="header" class="header">
+    <div class="container header-container">
+      <!-- Logo Block -->
+      <a href="index.html#/home" class="logo-link" id="logo-nav-link">
+        <div class="logo-img-wrapper">
+          <img src="/src/assets/images/school_crest_logo_1784645340046.jpg" alt="His Grace School Agbugburu Logo" class="logo-img" referrerPolicy="no-referrer">
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">His Grace School</span>
+          <span class="logo-subtitle">Agbugburu</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Menu -->
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="index.html#/home" class="nav-link">Home</a></li>
+        <li><a href="index.html#/about" class="nav-link">About Us</a></li>
+        <li><a href="index.html#/admission" class="nav-link">Admission</a></li>
+        <li><a href="index.html#/gallery" class="nav-link">Gallery</a></li>
+        <li><a href="index.html#/contact" class="nav-link">Contact Us</a></li>
+        
+        <!-- Portal Dropdown (Includes QR Verification link) -->
+        <li class="dropdown active" id="portal-dropdown">
+          <span class="nav-link dropdown-toggle">
+            Portal
+            <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
+          <ul class="dropdown-menu">
+            <li class="dropdown-item"><a href="applicant-dashboard.html" class="dropdown-link">Applicant Portal</a></li>
+            <li class="dropdown-item"><a href="admission-decision.html" class="dropdown-link">Admission Decision</a></li>
+            <li class="dropdown-item"><a href="qr-verification.html" class="dropdown-link active">QR Verification</a></li>
+            <li class="dropdown-item"><a href="admin-admission-review.html" class="dropdown-link">Administrator Portal</a></li>
+          </ul>
+        </li>
+      </ul>
+
+      <!-- Mobile Toggle -->
+      <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================================= -->
+  <!-- MAIN CONTENT                                              -->
+  <!-- ========================================================= -->
+  <main class="page-view active" style="margin-top: var(--header-height);">
+    
+    <!-- PAGE BANNER -->
+    <section class="page-banner">
+      <div class="hero-bg-wrapper">
+        <img src="/src/assets/images/students_classroom_1784645353103.jpg" alt="His Grace School Classroom" class="hero-bg" style="opacity: 0.15;" referrerPolicy="no-referrer">
+      </div>
+      <div class="hero-overlay" style="background: linear-gradient(135deg, rgba(18, 62, 124, 0.95) 0%, rgba(9, 33, 68, 0.98) 100%);"></div>
+      <div class="container page-banner-container" style="position: relative; z-index: 5;">
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(212, 175, 55, 0.2); border: 1px solid var(--accent); padding: 0.35rem 0.85rem; border-radius: var(--radius-full); color: var(--accent); font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.75rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Official Records Validation
+        </div>
+        <h1>QR Code Verification</h1>
+        <p class="hero-subtitle" style="color: rgba(255, 255, 255, 0.9); font-size: 1.15rem; font-weight: 400; margin-top: 0.5rem; margin-bottom: 1.5rem; max-width: 680px;">
+          Verify an applicant or student using the official His Grace School Agbugburu verification system.
+        </p>
+        <ul class="breadcrumbs">
+          <li><a href="index.html#/home">Home</a></li>
+          <li><a href="applicant-dashboard.html">Portal</a></li>
+          <li>QR Verification</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- MAIN VERIFICATION DASHBOARD CONTENT -->
+    <section class="section section-bg" style="background-color: var(--secondary-bg); padding: 3.5rem 0;">
+      <div class="container">
+        
+        <div class="qr-portal-container">
+
+          <!-- SECTION 1: VERIFICATION METHODS GRID -->
+          <div class="verification-methods-grid">
+
+            <!-- OPTION 1: SCAN QR CODE (Camera Placeholder) -->
+            <div class="method-card">
+              <div class="method-card-header">
+                <div class="method-icon-wrap">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                </div>
+                <div>
+                  <h2>Option 1: Scan QR Code</h2>
+                  <p>Point device camera at official school QR Code</p>
+                </div>
+              </div>
+
+              <!-- Camera Viewfinder Box Placeholder -->
+              <div class="camera-placeholder-box">
+                <!-- Viewfinder frame UI -->
+                <div class="scanner-viewfinder">
+                  <div class="scanner-corner corner-tl"></div>
+                  <div class="scanner-corner corner-tr"></div>
+                  <div class="scanner-corner corner-bl"></div>
+                  <div class="scanner-corner corner-br"></div>
+                  <div class="scanner-line"></div>
+                </div>
+
+                <div class="camera-notice-badge">
+                  <span></span>
+                  Camera Scanner Coming Soon
+                </div>
+
+                <p style="font-size: 0.775rem; color: #64748B; margin-top: 1rem; max-width: 280px; position: relative; z-index: 2;">
+                  Hardware camera scanning integration will be activated upon live backend deployment.
+                </p>
+              </div>
+            </div>
+
+            <!-- OPTION 2: MANUAL VERIFICATION FORM -->
+            <div class="method-card">
+              <div class="method-card-header">
+                <div class="method-icon-wrap" style="background-color: rgba(212, 175, 55, 0.15); color: #B48811;">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                </div>
+                <div>
+                  <h2>Option 2: Manual Verification</h2>
+                  <p>Enter the official identification reference number</p>
+                </div>
+              </div>
+
+              <form id="qr-verify-form" style="display: flex; flex-direction: column; height: 100%; justify-content: space-between;">
+                <div>
+                  <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label for="verification-id-input" class="form-label" style="font-weight: 700; color: var(--primary);">
+                      Applicant ID or Student ID <span style="color: #EF4444;">*</span>
+                    </label>
+                    <div style="position: relative;">
+                      <input 
+                        type="text" 
+                        id="verification-id-input" 
+                        class="form-input" 
+                        placeholder="e.g., HGS-2026-8942 or HGS-STD-1024" 
+                        style="padding-left: 2.75rem; font-family: monospace; font-size: 1rem; font-weight: 600;" 
+                        required
+                      >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <!-- Quick Sample Pill Selection for Demo Testing -->
+                  <div style="margin-bottom: 1.5rem;">
+                    <span style="font-size: 0.775rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 0.35rem;">
+                      Try Quick Test Sample IDs:
+                    </span>
+                    <div class="sample-pills-wrap">
+                      <button type="button" class="sample-pill" data-id="HGS-2026-8942">HGS-2026-8942 (Applicant)</button>
+                      <button type="button" class="sample-pill" data-id="HGS-STD-1024">HGS-STD-1024 (Student)</button>
+                      <button type="button" class="sample-pill" data-id="HGS-9999-0000" style="color: #EF4444;">HGS-9999 (Invalid)</button>
+                    </div>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="btn-verify-record" style="width: 100%; justify-content: center; padding: 0.85rem 1.5rem; font-size: 1rem; font-weight: 700;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Verify Record
+                </button>
+              </form>
+            </div>
+
+          </div>
+
+
+          <!-- SECTION 2: VERIFICATION RESULT CARD (DYNAMIC REVEAL) -->
+          <div class="result-section" id="result-section">
+            
+            <!-- DEFAULT / INITIAL RESULTS PROMPT CARD -->
+            <div class="result-card" id="initial-result-placeholder" style="padding: 2.5rem; text-align: center; background: #FFFFFF;">
+              <div style="width: 60px; height: 60px; border-radius: 50%; background-color: rgba(18, 62, 124, 0.06); color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto;">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              </div>
+              <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 0.35rem;">Awaiting Verification Query</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 500px; margin: 0 auto;">
+                Enter an Applicant ID or Student ID above and click <strong>"Verify Record"</strong> to check authentic registration details from the official school repository.
+              </p>
+            </div>
+
+            <!-- VERIFIED RESULT STATE (HIDDEN BY DEFAULT, SHOWN ON VALID ID) -->
+            <div class="result-card verified-state" id="verified-result-card" style="display: none;">
+              <!-- Watermark Logo Seal in Background -->
+              <img src="/src/assets/images/school_crest_logo_1784645340046.jpg" alt="School Seal Watermark" class="watermark-seal" referrerPolicy="no-referrer">
+
+              <!-- Header Bar -->
+              <div class="result-card-header">
+                <div>
+                  <span style="font-size: 0.775rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; color: var(--accent);">
+                    His Grace School Agbugburu Verification Service
+                  </span>
+                  <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--primary); margin-top: 0.1rem;" id="res-header-title">
+                    Official Student / Applicant Verification
+                  </h3>
+                </div>
+
+                <div class="result-status-badge verified">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  ✓ OFFICIAL RECORD VERIFIED
+                </div>
+              </div>
+
+              <!-- Body Details Grid -->
+              <div class="result-card-body">
+                <div class="verified-grid">
+                  
+                  <div class="verified-item">
+                    <span class="verified-label">Record Full Name</span>
+                    <span class="verified-value" id="res-full-name">Adebayo Samuel Oluwaseun</span>
+                  </div>
+
+                  <div class="verified-item">
+                    <span class="verified-label">Identification ID</span>
+                    <span class="verified-value" style="font-family: monospace;" id="res-id-code">HGS-2026-8942</span>
+                  </div>
+
+                  <div class="verified-item">
+                    <span class="verified-label">Admission / Enrollment Status</span>
+                    <span class="verified-value" style="color: #059669;" id="res-status-label">Provisional Admission Offered</span>
+                  </div>
+
+                  <div class="verified-item">
+                    <span class="verified-label">Assigned Class</span>
+                    <span class="verified-value" id="res-class-label">JSS 1 (Junior Secondary)</span>
+                  </div>
+
+                  <div class="verified-item">
+                    <span class="verified-label">Verification Timestamp</span>
+                    <span class="verified-value" style="font-size: 0.95rem; font-weight: 600; color: var(--text-dark);" id="res-timestamp">21st July 2026, 13:12 UTC</span>
+                  </div>
+
+                  <div class="verified-item">
+                    <span class="verified-label">Issuing School Body</span>
+                    <span class="verified-value" style="font-size: 0.95rem;">His Grace School Agbugburu</span>
+                  </div>
+
+                </div>
+
+                <!-- Extra authenticity confirmation row -->
+                <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px dashed var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                  <div style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: #065F46; background-color: #ECFDF5; padding: 0.5rem 1rem; border-radius: var(--radius-md); border: 1px solid #A7F3D0;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <span>Cryptographic digital seal active. Document verified authentic.</span>
+                  </div>
+
+                  <button type="button" class="btn btn-outline" id="btn-print-verification" style="padding: 0.45rem 1rem; font-size: 0.825rem;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    Print Verification Slip
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- INVALID RESULT STATE (HIDDEN BY DEFAULT, SHOWN ON UNMATCHED ID) -->
+            <div class="result-card invalid-state" id="invalid-result-card" style="display: none;">
+              <div class="result-card-header" style="background-color: #FEF2F2;">
+                <div>
+                  <span style="font-size: 0.775rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; color: #991B1B;">
+                    Verification Alert
+                  </span>
+                  <h3 style="font-size: 1.25rem; font-weight: 700; color: #991B1B; margin-top: 0.1rem;">
+                    Invalid or Unrecognized Reference
+                  </h3>
+                </div>
+
+                <div class="result-status-badge invalid">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                  RECORD NOT FOUND
+                </div>
+              </div>
+
+              <div class="result-card-body">
+                <div class="invalid-box">
+                  <div class="invalid-icon-wrap">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                  </div>
+                  <h3>Record Not Found</h3>
+                  <p>
+                    No matching student or applicant record was found in the official His Grace School Agbugburu central database for ID reference: <strong style="font-family: monospace; color: #991B1B;" id="searched-id-display">HGS-0000</strong>.
+                  </p>
+                  <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Please ensure you typed the reference number correctly (including prefixes like <code>HGS-2026-</code>) or contact the school administrative desk for manual clearance.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
+          <!-- SECTION 3: FUTURE QR LOCATIONS INFO CARDS -->
+          <div style="margin-top: 1rem;">
+            <div style="margin-bottom: 1.25rem;">
+              <h3 style="font-size: 1.35rem; font-weight: 700; color: var(--primary);">Official QR Code Deployment Locations</h3>
+              <p style="font-size: 0.9rem; color: var(--text-muted);">
+                In future updates, unique scannable QR Codes will be embedded directly across these official items:
+              </p>
+            </div>
+
+            <div class="future-locations-grid">
+              
+              <!-- Location 1 -->
+              <div class="location-card">
+                <div class="location-icon-badge">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                </div>
+                <h4>Admission Letter</h4>
+                <p>Embedded on official admission offers to prevent letter forgery and verify student provisional acceptance.</p>
+              </div>
+
+              <!-- Location 2 -->
+              <div class="location-card">
+                <div class="location-icon-badge">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M6 8h4v4H6z"></path><line x1="14" y1="8" x2="18" y2="8"></line><line x1="14" y1="12" x2="18" y2="12"></line><line x1="6" y1="16" x2="18" y2="16"></line></svg>
+                </div>
+                <h4>Student Identity Card</h4>
+                <p>Printed on student identity badges for campus entry validation, library borrowing, and exam room verification.</p>
+              </div>
+
+              <!-- Location 3 -->
+              <div class="location-card">
+                <div class="location-icon-badge">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+                </div>
+                <h4>Student Portal Profile</h4>
+                <p>Displayed within the authenticated digital dashboard for fast mobile display and identity checks.</p>
+              </div>
+
+              <!-- Location 4 -->
+              <div class="location-card">
+                <div class="location-icon-badge">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                </div>
+                <h4>Official School Records</h4>
+                <p>Printed on transcripts, graduation certificates, and fee payment receipts for external third-party verification.</p>
+              </div>
+
+            </div>
+          </div>
+
+
+          <!-- SECTION 4: ADMINISTRATOR PREPARATION (PLACEHOLDERS) -->
+          <div class="admin-prep-card">
+            <div class="admin-prep-header">
+              <h3>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                Administrator Preparation Actions
+              </h3>
+              <span class="admin-badge">Admin Privileges - Backend Pending</span>
+            </div>
+
+            <p style="font-size: 0.875rem; color: #94A3B8; margin-bottom: 1.25rem;">
+              These administrative controls are pre-designed for managing QR Code lifecycles once backend services are enabled:
+            </p>
+
+            <div class="admin-actions-grid">
+              
+              <button type="button" class="admin-action-btn" disabled title="Feature available after backend integration">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                <span>Generate QR Code</span>
+                <span class="disabled-tag">Disabled</span>
+              </button>
+
+              <button type="button" class="admin-action-btn" disabled title="Feature available after backend integration">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                <span>Regenerate QR Code</span>
+                <span class="disabled-tag">Disabled</span>
+              </button>
+
+              <button type="button" class="admin-action-btn" disabled title="Feature available after backend integration">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+                <span>Disable QR Code</span>
+                <span class="disabled-tag">Disabled</span>
+              </button>
+
+              <button type="button" class="admin-action-btn" disabled title="Feature available after backend integration">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="12 8 12 12 14 14"></polyline><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"></path></svg>
+                <span>View Verification History</span>
+                <span class="disabled-tag">Disabled</span>
+              </button>
+
+            </div>
+          </div>
+
+
+          <!-- SECTION 5: SECURITY SECTION -->
+          <div class="security-notice-card">
+            <div class="security-shield-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <div class="security-content">
+              <h4>Encrypted Security Guarantee</h4>
+              <p>
+                Every generated QR Code will be cryptographically unique and securely mapped to a single official school record upon complete backend integration. This ensures tamper-proof verification, zero document duplication, and instant authenticity checks for employers, institutions, and regulatory bodies worldwide.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+
+  <!-- ========================================================= -->
+  <!-- TOAST CONTAINER                                           -->
+  <!-- ========================================================= -->
+  <div id="toast-container" class="toast-container"></div>
+
+
+  <!-- ========================================================= -->
+  <!-- FOOTER                                                    -->
+  <!-- ========================================================= -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <!-- Column 1: School Identity -->
+      <div class="footer-logo-block">
+        <div class="footer-logo-wrapper">
+          <div class="logo-img-wrapper" style="width: 44px; height: 44px; border: 1px solid rgba(255, 255, 255, 0.15); background-color: white;">
+            <img src="/src/assets/images/school_crest_logo_1784645340046.jpg" alt="His Grace School Agbugburu Crest" class="logo-img" referrerPolicy="no-referrer">
+          </div>
+          <span class="footer-logo-title">His Grace School</span>
+        </div>
+        <p class="footer-school-desc">We are highly committed to providing a solid foundation, academic excellence, and robust moral training. Dedicated to molding your child for a bright, great, and leadership-driven tomorrow.</p>
+        <p class="footer-school-desc" style="color: var(--accent); font-weight: 600; letter-spacing: 2px;">MOLDING LIVES FOR GREATNESS</p>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div>
+        <h3 class="footer-heading">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="index.html#/home" class="footer-link">Home</a></li>
+          <li><a href="index.html#/about" class="footer-link">About Us</a></li>
+          <li><a href="index.html#/admission" class="footer-link">Admission Guide</a></li>
+          <li><a href="index.html#/gallery" class="footer-link">School Gallery</a></li>
+          <li><a href="qr-verification.html" class="footer-link">QR Code Verification</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Contact & Address -->
+      <div>
+        <h3 class="footer-heading">Our Contact</h3>
+        <ul class="footer-contact-list">
+          <li class="footer-contact-item">
+            <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span>Agbugburu Village, Odeda Local Government, Abeokuta, Ogun State, Nigeria.</span>
+          </li>
+          <li class="footer-contact-item">
+            <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <span>hisgraceschoolagbugburu@gmail.com</span>
+          </li>
+          <li class="footer-contact-item">
+            <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            <span>09034014865, 08068045866</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Footer Copyright -->
+    <div class="container footer-bottom">
+      <p>&copy; 2026 His Grace School Agbugburu. All rights reserved.</p>
+      <p style="font-size: 0.75rem;">QR Verification System V1.0</p>
+    </div>
+  </footer>
+
+  <!-- Page Logic -->
+  <script src="js/qr-verification.js" defer></script>
+</body>
+</html>
