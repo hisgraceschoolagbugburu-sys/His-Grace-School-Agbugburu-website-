@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Portal Dashboard | His Grace School Agbugburu</title>
+  
+  <!-- SEO & Meta Description -->
+  <meta name="description" content="His Grace School Agbugburu official Teacher Portal. Manage assigned classes, student attendance, assessment results, lesson notes, and timetables.">
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* Custom Styling for Teacher Portal Dashboard */
+    .portal-app-layout {
+      display: flex;
+      min-height: calc(100vh - var(--header-height));
+      background-color: var(--secondary-bg);
+    }
+
+    /* Sidebar Navigation */
+    .portal-sidebar {
+      width: 270px;
+      background: var(--white);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: sticky;
+      top: var(--header-height);
+      height: calc(100vh - var(--header-height));
+      overflow-y: auto;
+      z-index: 100;
+      transition: var(--transition-smooth);
+    }
+
+    .portal-sidebar-header {
+      padding: 1.5rem 1.25rem 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .teacher-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(18, 62, 124, 0.1);
+      color: var(--primary);
+      border: 1px solid rgba(18, 62, 124, 0.25);
+      padding: 0.3rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sidebar-menu-list {
+      list-style: none;
+      padding: 1rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .sidebar-item-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition-fast);
+      text-align: left;
+    }
+
+    .sidebar-item-btn:hover {
+      background: rgba(18, 62, 124, 0.05);
+      color: var(--primary);
+    }
+
+    .sidebar-item-btn.active {
+      background: var(--primary);
+      color: var(--white);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-item-btn.active svg {
+      color: var(--accent);
+    }
+
+    .sidebar-item-btn.logout-btn {
+      color: #DC2626;
+    }
+
+    .sidebar-item-btn.logout-btn:hover {
+      background: #FEE2E2;
+      color: #991B1B;
+    }
+
+    .coming-soon-badge {
+      font-size: 0.65rem;
+      background: #FEF3C7;
+      color: #92400E;
+      padding: 0.15rem 0.45rem;
+      border-radius: var(--radius-sm);
+      margin-left: auto;
+      font-weight: 700;
+      border: 1px solid #FDE68A;
+      text-transform: uppercase;
+    }
+
+    /* Main Content View Container */
+    .portal-main-content {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    @media (max-width: 992px) {
+      .portal-app-layout {
+        flex-direction: column;
+      }
+      .portal-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        top: 0;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .sidebar-menu-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 0.5rem;
+      }
+      .portal-main-content {
+        padding: 1.25rem;
+      }
+    }
+
+    /* WELCOME CARD STYLING */
+    .welcome-card-hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #092144 100%);
+      color: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.75rem;
+      flex-wrap: wrap;
+    }
+
+    .welcome-card-hero::after {
+      content: '';
+      position: absolute;
+      right: -50px;
+      bottom: -50px;
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .welcome-text-block h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 0.4rem;
+    }
+
+    .welcome-meta-grid {
+      display: flex;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .welcome-meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.35rem 0.85rem;
+      border-radius: var(--radius-full);
+      backdrop-filter: blur(4px);
+    }
+
+    .teacher-photo-avatar {
+      width: 105px;
+      height: 105px;
+      border-radius: 50%;
+      border: 3px solid var(--accent);
+      padding: 3px;
+      background: var(--white);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      flex-shrink: 0;
+      object-fit: cover;
+    }
+
+    /* QUICK ACTIONS TOOLBAR */
+    .quick-actions-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .quick-act-btn {
+      flex: 1;
+      min-width: 160px;
+      padding: 0.85rem 1.25rem;
+      border-radius: var(--radius-md);
+      background: var(--white);
+      border: 1px solid var(--border);
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition-fast);
+    }
+
+    .quick-act-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* DASHBOARD MODULE CARDS GRID */
+    .dashboard-modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .module-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition-smooth);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 180px;
+      cursor: pointer;
+    }
+
+    .module-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(212, 175, 55, 0.4);
+    }
+
+    .module-card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--secondary-bg);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      transition: var(--transition-fast);
+    }
+
+    .module-card:hover .module-card-icon {
+      background: var(--primary);
+      color: var(--accent);
+    }
+
+    .module-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .module-card p {
+      font-size: 0.825rem;
+      color: var(--text-muted);
+      margin-bottom: 0;
+      line-height: 1.4;
+    }
+
+    .status-tag-active {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #059669;
+      background: #D1FAE5;
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+      border: 1px solid #A7F3D0;
+    }
+
+    .status-tag-soon {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #92400E;
+      background: #FEF3C7;
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+      border: 1px solid #FDE68A;
+    }
+
+    /* TEACHER PROFILE DETAILS SECTION */
+    .profile-card-full {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .profile-header-flex {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .profile-avatar-xl {
+      width: 125px;
+      height: 125px;
+      border-radius: 50%;
+      border: 3px solid var(--accent);
+      padding: 4px;
+      background: var(--white);
+      box-shadow: var(--shadow-md);
+    }
+
+    .profile-avatar-xl img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .profile-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.75rem;
+    }
+
+    .profile-info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      background: var(--secondary-bg);
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .profile-info-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .profile-info-value {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* NOTIFICATION PANEL STYLING */
+    .notifications-panel-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 2.5rem;
+    }
+
+    .empty-notification-state {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: var(--text-muted);
+    }
+
+    .empty-icon-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--secondary-bg);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem auto;
+      border: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================= -->
+  <!-- HEADER & NAVIGATION                                       -->
+  <!-- ========================================================= -->
+  <header id="header" class="header">
+    <div class="container header-container">
+      <!-- Logo Block -->
+      <a href="index.html#/home" class="logo-link" id="logo-nav-link">
+        <div class="logo-img-wrapper">
+          <img src="/src/assets/images/school_crest_logo_1784645340046.jpg" alt="His Grace School Agbugburu Logo" class="logo-img" referrerPolicy="no-referrer">
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">His Grace School</span>
+          <span class="logo-subtitle">Agbugburu</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Menu -->
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="index.html#/home" class="nav-link">Home</a></li>
+        <li><a href="index.html#/about" class="nav-link">About Us</a></li>
+        <li><a href="index.html#/admission" class="nav-link">Admission</a></li>
+        <li><a href="index.html#/gallery" class="nav-link">Gallery</a></li>
+        <li><a href="index.html#/contact" class="nav-link">Contact Us</a></li>
+        
+        <!-- Portal Dropdown -->
+        <li class="dropdown active" id="portal-dropdown">
+          <span class="nav-link dropdown-toggle">
+            Portal
+            <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
+          <ul class="dropdown-menu">
+            <li class="dropdown-item"><a href="applicant-dashboard.html" class="dropdown-link">Applicant Portal</a></li>
+            <li class="dropdown-item"><a href="student-login.html" class="dropdown-link">Student Portal</a></li>
+            <li class="dropdown-item"><a href="teacher-portal.html" class="dropdown-link active">Teacher Portal</a></li>
+            <li class="dropdown-item"><a href="qr-verification.html" class="dropdown-link">QR Verification</a></li>
+            <li class="dropdown-item"><a href="admin-admission-review.html" class="dropdown-link">Administrator Portal</a></li>
+          </ul>
+        </li>
+      </ul>
+
+      <!-- Mobile Toggle -->
+      <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================================= -->
+  <!-- MAIN LAYOUT: SIDEBAR + DASHBOARD CONTENT                  -->
+  <!-- ========================================================= -->
+  <div class="portal-app-layout" style="margin-top: var(--header-height);">
+    
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="portal-sidebar" id="portal-sidebar">
+      <div>
+        <div class="portal-sidebar-header">
+          <span class="teacher-badge-pill">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Academic Staff
+          </span>
+          <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--primary); margin-top: 0.5rem; margin-bottom: 0.15rem;">
+            Mr. Emmanuel Adebayo
+          </h4>
+          <span style="font-size: 0.8rem; color: var(--text-muted); font-family: monospace; display: block;">
+            Staff ID: HGS-TCH-2045
+          </span>
+        </div>
+
+        <ul class="sidebar-menu-list">
+          <li>
+            <button class="sidebar-item-btn active" data-tab="dashboard">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+              Dashboard
+            </button>
+          </li>
+          <li>
+            <button class="sidebar-item-btn" data-tab="profile">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              Profile
+            </button>
+          </li>
+          <li>
+            <button class="sidebar-item-btn" data-tab="classes">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              Classes
+              <span class="coming-soon-badge">Soon</span>
+            </button>
+          </li>
+          <li>
+            <button class="sidebar-item-btn" data-tab="attendance">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              Attendance
+              <span class="coming-soon-badge">Soon</span>
+            </button>
+          </li>
+          <li>
+            <button class="sidebar-item-btn" data-tab="results">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              Results
+              <span class="coming-soon-badge">Soon</span>
+            </button>
+          </li>
+          <li>
+            <button class="sidebar-item-btn" data-tab="assignments">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+              Assignments
+              <span class="coming-soon-badge">Soon</span>
+            </button>
+          </li>
+          <li>
+            <button class="sidebar-item-btn" data-tab="lesson-notes">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+              Lesson Notes
+              <span class="coming-soon-badge">Soon</span>
+            </button>
+          </li>
+          <li>
+            <button class="sidebar-item-btn" data-tab="timetable">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              Timetable
+              <span class="coming-soon-badge">Soon</span>
+            </button>
+          </li>
+          <li>
+            <button class="sidebar-item-btn" data-tab="announcements">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+              Announcements
+            </button>
+          </li>
+          <li>
+            <button class="sidebar-item-btn" data-tab="downloads">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Downloads
+              <span class="coming-soon-badge">Soon</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div style="padding: 1rem 0.75rem; border-top: 1px solid var(--border);">
+        <button class="sidebar-item-btn logout-btn" id="sidebar-logout-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT VIEW -->
+    <main class="portal-main-content">
+      
+      <!-- VIEW 1: MAIN DASHBOARD VIEW -->
+      <div class="tab-content-pane active" id="pane-dashboard">
+        
+        <!-- WELCOME HERO CARD -->
+        <div class="welcome-card-hero">
+          <div class="welcome-text-block">
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 1px;">
+              His Grace School Teacher Portal
+            </span>
+            <h2>Welcome, Mr. Emmanuel Adebayo</h2>
+            <p style="color: rgba(255, 255, 255, 0.9); font-size: 0.95rem; margin-bottom: 0; max-width: 580px;">
+              Manage class attendance registers, upload continuous assessments, publish lesson plans, and view school timetables.
+            </p>
+
+            <div class="welcome-meta-grid">
+              <div class="welcome-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle></svg>
+                Staff ID: <strong style="font-family: monospace; color: var(--accent);">HGS-TCH-2045</strong>
+              </div>
+              <div class="welcome-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                Dept: <strong>Sciences & Mathematics</strong>
+              </div>
+              <div class="welcome-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                Assigned Class: <strong>SSS 2 Science (Form Master)</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Teacher Photo Avatar Placeholder -->
+          <img src="/src/assets/images/teacher_portrait_1784673803003.jpg" alt="Teacher Photograph" class="teacher-photo-avatar" referrerPolicy="no-referrer">
+        </div>
+
+        <!-- QUICK ACTIONS BAR -->
+        <div class="quick-actions-bar">
+          <button type="button" class="quick-act-btn" id="qa-my-profile">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            My Profile
+          </button>
+          <button type="button" class="quick-act-btn" id="qa-my-timetable">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            My Timetable
+          </button>
+          <button type="button" class="quick-act-btn" id="qa-student-results">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line></svg>
+            Student Results
+          </button>
+          <button type="button" class="quick-act-btn" id="qa-attendance">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            Attendance
+          </button>
+          <button type="button" class="quick-act-btn" id="qa-logout" style="color: #DC2626; border-color: #FCA5A5;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            Logout
+          </button>
+        </div>
+
+        <!-- MODULE CARDS GRID -->
+        <div style="margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.35rem; font-weight: 700; color: var(--primary);">Academic Staff Modules</h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted);">Access teaching tools, assessment registers, and staff management services:</p>
+        </div>
+
+        <div class="dashboard-modules-grid">
+          
+          <!-- 1. My Profile (Active) -->
+          <div class="module-card" data-action="profile">
+            <div>
+              <div class="module-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              </div>
+              <h3>My Profile</h3>
+              <p>Staff biodata, qualification credentials, contact email, and employment details.</p>
+            </div>
+            <div>
+              <span class="status-tag-active">Active Module</span>
+            </div>
+          </div>
+
+          <!-- 2. My Classes -->
+          <div class="module-card" data-action="classes">
+            <div>
+              <div class="module-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              </div>
+              <h3>My Classes</h3>
+              <p>View assigned subject classes, student rosters, and form teacher registers.</p>
+            </div>
+            <div>
+              <span class="status-tag-soon">Coming Soon</span>
+            </div>
+          </div>
+
+          <!-- 3. Student Attendance -->
+          <div class="module-card" data-action="attendance">
+            <div>
+              <div class="module-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
+              </div>
+              <h3>Student Attendance</h3>
+              <p>Mark daily class attendance, present logs, and record absence notes.</p>
+            </div>
+            <div>
+              <span class="status-tag-soon">Coming Soon</span>
+            </div>
+          </div>
+
+          <!-- 4. Student Results -->
+          <div class="module-card" data-action="results">
+            <div>
+              <div class="module-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line></svg>
+              </div>
+              <h3>Student Results</h3>
+              <p>Input continuous assessment scores, term examination marks, and principal comments.</p>
+            </div>
+            <div>
+              <span class="status-tag-soon">Coming Soon</span>
+            </div>
+          </div>
+
+          <!-- 5. Assignments -->
+          <div class="module-card" data-action="assignments">
+            <div>
+              <div class="module-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path></svg>
+              </div>
+              <h3>Assignments</h3>
+              <p>Create homework assignments, set submission deadlines, and review student entries.</p>
+            </div>
+            <div>
+              <span class="status-tag-soon">Coming Soon</span>
+            </div>
+          </div>
+
+          <!-- 6. Lesson Notes -->
+          <div class="module-card" data-action="lesson-notes">
+            <div>
+              <div class="module-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+              </div>
+              <h3>Lesson Notes</h3>
+              <p>Upload weekly lesson plans, curriculum outlines, and teaching resources for review.</p>
+            </div>
+            <div>
+              <span class="status-tag-soon">Coming Soon</span>
+            </div>
+          </div>
+
+          <!-- 7. Timetable -->
+          <div class="module-card" data-action="timetable">
+            <div>
+              <div class="module-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </div>
+              <h3>Teaching Timetable</h3>
+              <p>Weekly period allocation, subject teaching schedules, and invigilation duties.</p>
+            </div>
+            <div>
+              <span class="status-tag-soon">Coming Soon</span>
+            </div>
+          </div>
+
+          <!-- 8. Announcements -->
+          <div class="module-card" data-action="announcements">
+            <div>
+              <div class="module-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path></svg>
+              </div>
+              <h3>Announcements</h3>
+              <p>Staff meeting notices, academic circulars from management, and school events.</p>
+            </div>
+            <div>
+              <span class="status-tag-active">Active Panel</span>
+            </div>
+          </div>
+
+          <!-- 9. Messages -->
+          <div class="module-card" data-action="messages">
+            <div>
+              <div class="module-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              </div>
+              <h3>Internal Messages</h3>
+              <p>Communicate with school administration, department heads, and fellow teachers.</p>
+            </div>
+            <div>
+              <span class="status-tag-soon">Coming Soon</span>
+            </div>
+          </div>
+
+          <!-- 10. Downloads -->
+          <div class="module-card" data-action="downloads">
+            <div>
+              <div class="module-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              </div>
+              <h3>Staff Downloads</h3>
+              <p>Download grading templates, syllabus guidelines, and examination answer keys.</p>
+            </div>
+            <div>
+              <span class="status-tag-soon">Coming Soon</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- VIEW 2: TEACHER PROFILE VIEW -->
+      <div class="tab-content-pane" id="pane-profile" style="display: none;">
+        
+        <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <h2 style="font-size: 1.6rem; font-weight: 700; color: var(--primary); margin-bottom: 0.2rem;">
+              Teacher Profile Information
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Official academic staff credentials on file at His Grace School Agbugburu</p>
+          </div>
+          <button type="button" class="btn btn-outline btn-back-dashboard" style="padding: 0.5rem 1rem;">
+            ← Back to Dashboard
+          </button>
+        </div>
+
+        <div class="profile-card-full">
+          <div class="profile-header-flex">
+            <div class="profile-avatar-xl">
+              <img src="/src/assets/images/teacher_portrait_1784673803003.jpg" alt="Teacher Profile Photo" referrerPolicy="no-referrer">
+            </div>
+            <div>
+              <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 1px;">
+                Official Staff Record
+              </span>
+              <h3 style="font-size: 1.75rem; font-weight: 800; color: var(--primary); margin-bottom: 0.25rem;">
+                Mr. Emmanuel Adebayo
+              </h3>
+              <div style="display: flex; gap: 1rem; font-size: 0.9rem; color: var(--text-muted); flex-wrap: wrap;">
+                <span>Staff ID: <strong style="color: var(--primary); font-family: monospace;">HGS-TCH-2045</strong></span>
+                <span>•</span>
+                <span>Department: <strong style="color: var(--primary);">Sciences & Mathematics</strong></span>
+                <span>•</span>
+                <span>Status: <strong style="color: #059669;">Full-Time Senior Tutor</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-info-grid">
+            <div class="profile-info-item">
+              <span class="profile-info-label">Full Name</span>
+              <span class="profile-info-value">Mr. Emmanuel Adebayo</span>
+            </div>
+
+            <div class="profile-info-item">
+              <span class="profile-info-label">Staff ID</span>
+              <span class="profile-info-value" style="font-family: monospace;">HGS-TCH-2045</span>
+            </div>
+
+            <div class="profile-info-item">
+              <span class="profile-info-label">Department</span>
+              <span class="profile-info-value">Sciences & Mathematics</span>
+            </div>
+
+            <div class="profile-info-item">
+              <span class="profile-info-label">Qualification</span>
+              <span class="profile-info-value">B.Sc. (Ed) Physics, M.Sc. Educational Tech.</span>
+            </div>
+
+            <div class="profile-info-item">
+              <span class="profile-info-label">Phone Number</span>
+              <span class="profile-info-value" style="font-family: monospace;">08023456789</span>
+            </div>
+
+            <div class="profile-info-item">
+              <span class="profile-info-label">Email Address</span>
+              <span class="profile-info-value" style="font-size: 0.95rem; font-family: monospace;">e.adebayo@hisgraceschool.edu.ng</span>
+            </div>
+
+            <div class="profile-info-item">
+              <span class="profile-info-label">Employment Date</span>
+              <span class="profile-info-value">1st September 2018</span>
+            </div>
+
+            <div class="profile-info-item">
+              <span class="profile-info-label">Assigned Classes</span>
+              <span class="profile-info-value">SSS 1 Physics, SSS 2 Physics, SSS 3 Physics</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- VIEW 3: ANNOUNCEMENTS & NOTIFICATIONS PANEL VIEW -->
+      <div class="tab-content-pane" id="pane-announcements" style="display: none;">
+        
+        <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <h2 style="font-size: 1.6rem; font-weight: 700; color: var(--primary); margin-bottom: 0.2rem;">
+              Announcements & Circulars
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Official staff announcements and administrative notices</p>
+          </div>
+          <button type="button" class="btn btn-outline btn-back-dashboard" style="padding: 0.5rem 1rem;">
+            ← Back to Dashboard
+          </button>
+        </div>
+
+        <div class="notifications-panel-card">
+          <div class="empty-notification-state">
+            <div class="empty-icon-circle">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            </div>
+            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 0.35rem;">
+              No New Notifications.
+            </h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); max-width: 420px; margin: 0 auto;">
+              You have no unread staff notices at this time. All new academic memos and principal notices will appear here.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- VIEW 4: GENERIC "COMING SOON" PANE FOR OTHER MODULES -->
+      <div class="tab-content-pane" id="pane-coming-soon" style="display: none;">
+        <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <h2 style="font-size: 1.6rem; font-weight: 700; color: var(--primary); margin-bottom: 0.2rem;" id="cs-pane-title">
+              Module Name
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Stage 1 Preview Notice</p>
+          </div>
+          <button type="button" class="btn btn-outline btn-back-dashboard" style="padding: 0.5rem 1rem;">
+            ← Back to Dashboard
+          </button>
+        </div>
+
+        <div class="notifications-panel-card" style="text-align: center; padding: 4rem 2rem;">
+          <div style="width: 72px; height: 72px; border-radius: 50%; background-color: #FEF3C7; color: #92400E; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto; border: 2px solid #FDE68A;">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </div>
+
+          <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 0.5rem;">
+            Feature Coming Soon
+          </h3>
+
+          <p style="color: var(--text-dark); font-size: 0.95rem; max-width: 520px; margin: 0 auto 1.5rem auto; line-height: 1.6;">
+            The <strong id="cs-feature-name" style="color: var(--primary);">Module</strong> system interface is currently being prepared for Stage 2 backend integration with Firebase Firestore databases.
+          </p>
+
+          <button type="button" class="btn btn-primary btn-back-dashboard" style="padding: 0.75rem 1.5rem;">
+            Return to Teacher Dashboard
+          </button>
+        </div>
+      </div>
+
+      <!-- FUTURE FIREBASE INTEGRATION CARD -->
+      <div style="margin-top: 2rem; background: linear-gradient(135deg, rgba(18, 62, 124, 0.05) 0%, rgba(212, 175, 55, 0.08) 100%); border: 1.5px solid rgba(212, 175, 55, 0.3); border-radius: var(--radius-lg); padding: 1.75rem; display: flex; align-items: flex-start; gap: 1.25rem;">
+        <div style="width: 48px; height: 48px; border-radius: var(--radius-md); background: var(--primary); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: var(--shadow-sm);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
+        </div>
+        <div>
+          <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;">
+            Future Backend Integration Ready
+          </h4>
+          <p style="font-size: 0.875rem; color: var(--text-dark); margin-bottom: 0; line-height: 1.6;">
+            All modules in this Teacher Portal Stage 1 layout are structured for seamless future connectivity with Firebase authentication, real-time Firestore database synchronization (teacher records, student attendance registers, assessment entry, timetables, lesson plans, and internal messaging).
+          </p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container" class="toast-container"></div>
+
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-bottom" style="border-top: none; padding-top: 1.5rem; padding-bottom: 1.5rem;">
+      <p>&copy; 2026 His Grace School Agbugburu. All rights reserved.</p>
+      <p style="font-size: 0.75rem;">Teacher Portal Stage 1</p>
+    </div>
+  </footer>
+
+  <!-- Page Script -->
+  <script src="js/teacher-portal.js" defer></script>
+</body>
+</html>

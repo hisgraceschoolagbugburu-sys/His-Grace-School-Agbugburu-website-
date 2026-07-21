@@ -26,6 +26,8 @@ export default defineConfig(() => {
           qrVerification: path.resolve(__dirname, 'qr-verification.html'),
           studentLogin: path.resolve(__dirname, 'student-login.html'),
           studentPortal: path.resolve(__dirname, 'student-portal.html'),
+          teacherLogin: path.resolve(__dirname, 'teacher-login.html'),
+          teacherPortal: path.resolve(__dirname, 'teacher-portal.html'),
         },
       },
     },
