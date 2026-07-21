@@ -19,6 +19,7 @@ export default defineConfig(() => {
           login: path.resolve(__dirname, 'applicant-login.html'),
           forgotPassword: path.resolve(__dirname, 'forgot-password.html'),
           dashboard: path.resolve(__dirname, 'applicant-dashboard.html'),
+          application: path.resolve(__dirname, 'admission-application.html'),
         },
       },
     },
