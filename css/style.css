@@ -1509,6 +1509,56 @@ small, .text-small {
   color: var(--accent);
 }
 
+.lightbox-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  z-index: 2010;
+}
+
+.lightbox-nav-btn:hover {
+  background: var(--accent);
+  color: var(--primary);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.lightbox-nav-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.lightbox-nav-btn.prev-btn {
+  left: 2rem;
+}
+
+.lightbox-nav-btn.next-btn {
+  right: 2rem;
+}
+
+@media (max-width: 768px) {
+  .lightbox-nav-btn {
+    width: 44px;
+    height: 44px;
+  }
+  .lightbox-nav-btn.prev-btn {
+    left: 0.5rem;
+  }
+  .lightbox-nav-btn.next-btn {
+    right: 0.5rem;
+  }
+}
+
 /* Contact Us Page */
 .contact-grid {
   display: grid;

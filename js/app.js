@@ -203,6 +203,31 @@ document.addEventListener('DOMContentLoaded', () => {
   const filterButtons = document.querySelectorAll('.filter-btn');
   const galleryCards = document.querySelectorAll('.gallery-card');
 
+  // Keep track of which cards are currently visible to support lightbox cycling
+  let visibleCards = Array.from(galleryCards);
+
+  const filterGallery = (filterValue) => {
+    visibleCards = [];
+    galleryCards.forEach(card => {
+      const category = card.getAttribute('data-category');
+      if (filterValue === 'all' || category === filterValue) {
+        card.style.display = 'block';
+        visibleCards.push(card);
+        // Fade and scale in smoothly
+        setTimeout(() => {
+          card.style.opacity = '1';
+          card.style.transform = 'scale(1)';
+        }, 10);
+      } else {
+        card.style.opacity = '0';
+        card.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          card.style.display = 'none';
+        }, 300);
+      }
+    });
+  };
+
   filterButtons.forEach(button => {
     button.addEventListener('click', () => {
       // Set active button
@@ -210,25 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
       button.classList.add('active');
 
       const filterValue = button.getAttribute('data-filter');
-
-      // Filter gallery cards
-      galleryCards.forEach(card => {
-        const category = card.getAttribute('data-category');
-        if (filterValue === 'all' || category === filterValue) {
-          card.style.display = 'block';
-          // Force reflow and add animation class
-          setTimeout(() => {
-            card.style.opacity = '1';
-            card.style.transform = 'scale(1)';
-          }, 10);
-        } else {
-          card.style.opacity = '0';
-          card.style.transform = 'scale(0.9)';
-          setTimeout(() => {
-            card.style.display = 'none';
-          }, 300);
-        }
-      });
+      filterGallery(filterValue);
     });
   });
 
@@ -237,56 +244,142 @@ document.addEventListener('DOMContentLoaded', () => {
   const lightboxImg = document.getElementById('lightbox-img');
   const lightboxCaption = document.getElementById('lightbox-caption');
   const lightboxClose = document.getElementById('lightbox-close');
-  const zoomButtons = document.querySelectorAll('.gallery-zoom-btn, .gallery-preview-item');
+  const lightboxPrev = document.getElementById('lightbox-prev');
+  const lightboxNext = document.getElementById('lightbox-next');
+  
+  let currentCardIndex = -1;
 
-  zoomButtons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      // If it's a gallery preview item, get img inside, else get img relative to button
-      let img, title, category;
-      
-      if (btn.classList.contains('gallery-preview-item')) {
-        img = btn.querySelector('.gallery-preview-img');
-        title = btn.querySelector('.gallery-preview-text h4').textContent;
-        category = btn.querySelector('.gallery-preview-text p').textContent;
-      } else {
-        const card = btn.closest('.gallery-card');
-        img = card.querySelector('.gallery-img');
-        title = card.querySelector('.gallery-card-info h3').textContent;
-        category = card.querySelector('.gallery-card-info p').textContent;
-      }
+  const updateLightboxContent = (index) => {
+    if (index < 0 || index >= visibleCards.length) return;
+    currentCardIndex = index;
 
-      if (img && lightbox && lightboxImg && lightboxCaption) {
-        e.stopPropagation();
+    const card = visibleCards[index];
+    const img = card.querySelector('.gallery-img');
+    const title = card.querySelector('.gallery-card-info h3').textContent;
+    const category = card.querySelector('.gallery-card-info span').textContent;
+
+    if (img && lightboxImg && lightboxCaption) {
+      lightboxImg.style.opacity = '0';
+      setTimeout(() => {
         lightboxImg.src = img.src;
         lightboxCaption.textContent = `${title} — ${category}`;
+        lightboxImg.style.opacity = '1';
+      }, 150);
+    }
+  };
+
+  // Setup click listeners on cards for the zoom button or card image wrapper click
+  galleryCards.forEach(card => {
+    const zoomBtn = card.querySelector('.gallery-zoom-btn');
+    const imgWrapper = card.querySelector('.gallery-img-wrapper');
+    const triggerElements = [zoomBtn, imgWrapper].filter(Boolean);
+
+    triggerElements.forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Find index of this card in the currently visible cards
+        const index = visibleCards.indexOf(card);
+        if (index !== -1) {
+          updateLightboxContent(index);
+          if (lightbox) {
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Lock scrolling
+          }
+        }
+      });
+    });
+  });
+
+  // Also handle preview items on home page (which aren't part of the main gallery view grid)
+  const previewItems = document.querySelectorAll('.gallery-preview-item');
+  previewItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      const img = item.querySelector('.gallery-preview-img');
+      const title = item.querySelector('.gallery-preview-text h4').textContent;
+      const category = item.querySelector('.gallery-preview-text p').textContent;
+
+      if (img && lightbox && lightboxImg && lightboxCaption) {
+        lightboxImg.src = img.src;
+        lightboxCaption.textContent = `${title} — ${category}`;
+        // Hide previous/next buttons for preview mode
+        if (lightboxPrev) lightboxPrev.style.display = 'none';
+        if (lightboxNext) lightboxNext.style.display = 'none';
         lightbox.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Lock scrolling
+        document.body.style.overflow = 'hidden';
       }
     });
   });
 
-  if (lightboxClose && lightbox) {
-    const closeLightbox = () => {
+  // Lightbox Close Logic
+  const closeLightbox = () => {
+    if (lightbox) {
       lightbox.classList.remove('active');
       document.body.style.overflow = ''; // Unlock scrolling
-    };
+      // Restore previous/next button displays
+      if (lightboxPrev) lightboxPrev.style.display = '';
+      if (lightboxNext) lightboxNext.style.display = '';
+    }
+  };
 
+  if (lightboxClose) {
     lightboxClose.addEventListener('click', closeLightbox);
-    
-    // Close on overlay click
+  }
+
+  if (lightbox) {
     lightbox.addEventListener('click', (e) => {
       if (e.target === lightbox) {
         closeLightbox();
       }
     });
+  }
 
-    // Close on Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-        closeLightbox();
-      }
+  // Lightbox Navigation Logic (Prev / Next)
+  const navigateLightbox = (direction) => {
+    if (visibleCards.length === 0 || currentCardIndex === -1) return;
+    
+    let newIndex = currentCardIndex + direction;
+    if (newIndex < 0) {
+      newIndex = visibleCards.length - 1; // Cycle to end
+    } else if (newIndex >= visibleCards.length) {
+      newIndex = 0; // Cycle to start
+    }
+    
+    updateLightboxContent(newIndex);
+  };
+
+  if (lightboxPrev) {
+    lightboxPrev.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navigateLightbox(-1);
     });
   }
+
+  if (lightboxNext) {
+    lightboxNext.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navigateLightbox(1);
+    });
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox || !lightbox.classList.contains('active')) return;
+
+    if (e.key === 'Escape') {
+      closeLightbox();
+    } else if (e.key === 'ArrowLeft') {
+      if (currentCardIndex !== -1) {
+        navigateLightbox(-1);
+      }
+    } else if (e.key === 'ArrowRight') {
+      if (currentCardIndex !== -1) {
+        navigateLightbox(1);
+      }
+    }
+  });
 
   // --- CONTACT FORM SUBMISSION SIMULATOR ---
   if (contactForm) {
