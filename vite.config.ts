@@ -22,6 +22,7 @@ export default defineConfig(() => {
           application: path.resolve(__dirname, 'admission-application.html'),
           review: path.resolve(__dirname, 'application-review.html'),
           adminReview: path.resolve(__dirname, 'admin-admission-review.html'),
+          admissionDecision: path.resolve(__dirname, 'admission-decision.html'),
         },
       },
     },

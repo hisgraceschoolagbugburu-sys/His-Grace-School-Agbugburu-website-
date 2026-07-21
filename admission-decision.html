@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admission Decision | His Grace School Agbugburu</title>
+  
+  <!-- SEO & Meta Description -->
+  <meta name="description" content="Check your admission application decision and view or download your official admission letter from His Grace School Agbugburu.">
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* Admission Decision & Letter Custom Styling */
+    .decision-page-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* Demo Switcher Pill Bar */
+    .state-switcher-bar {
+      background: var(--white);
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .state-switcher-title {
+      font-size: 0.825rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .state-pills {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .state-pill-btn {
+      padding: 0.35rem 0.85rem;
+      border-radius: var(--radius-full);
+      font-size: 0.775rem;
+      font-weight: 700;
+      border: 1.5px solid var(--border);
+      background: var(--secondary-bg);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .state-pill-btn.active {
+      background: var(--primary);
+      color: var(--white);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Decision Status Card */
+    .decision-status-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition-smooth);
+    }
+
+    .decision-status-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 6px;
+      background-color: var(--primary);
+    }
+
+    .decision-status-card.status-state-approved::before { background-color: #10B981; }
+    .decision-status-card.status-state-under-review::before { background-color: #F59E0B; }
+    .decision-status-card.status-state-rejected::before { background-color: #EF4444; }
+
+    .decision-header-flex {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .applicant-meta-block h3 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .applicant-meta-info {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .applicant-meta-info span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    /* Large Status Badge */
+    .large-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: var(--radius-full);
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+
+    .large-status-badge.approved {
+      background-color: #D1FAE5;
+      color: #065F46;
+      border: 1.5px solid #A7F3D0;
+    }
+
+    .large-status-badge.under-review {
+      background-color: #FEF3C7;
+      color: #92400E;
+      border: 1.5px solid #FDE68A;
+    }
+
+    .large-status-badge.rejected {
+      background-color: #FEE2E2;
+      color: #991B1B;
+      border: 1.5px solid #FCA5A5;
+    }
+
+    .decision-message-box {
+      background: var(--secondary-bg);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      border-left: 4px solid var(--primary);
+      margin-bottom: 1.75rem;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: var(--text-dark);
+    }
+
+    .decision-status-card.status-state-approved .decision-message-box {
+      background-color: #ECFDF5;
+      border-left-color: #10B981;
+      color: #064E3B;
+    }
+
+    .decision-status-card.status-state-under-review .decision-message-box {
+      background-color: #FFFBEB;
+      border-left-color: #F59E0B;
+      color: #78350F;
+    }
+
+    .decision-status-card.status-state-rejected .decision-message-box {
+      background-color: #FEF2F2;
+      border-left-color: #EF4444;
+      color: #7F1D1D;
+    }
+
+    .action-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* ELEGANT OFFICIAL ADMISSION LETTER DOCUMENT STYLING */
+    .letter-document-wrapper {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+      padding: 3.5rem 3rem;
+      position: relative;
+      background-image: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 70%);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .letter-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 1.75rem;
+      border-bottom: 2px dashed var(--accent);
+      margin-bottom: 2rem;
+      gap: 1.5rem;
+    }
+
+    .letter-school-brand {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .letter-crest-img {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      border: 1.5px solid var(--accent);
+      border-radius: var(--radius-sm);
+      padding: 3px;
+      background: var(--white);
+    }
+
+    .letter-school-titles h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 0.15rem;
+      letter-spacing: -0.5px;
+    }
+
+    .letter-school-motto {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .letter-school-address {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-top: 0.2rem;
+    }
+
+    .letter-ref-badge {
+      text-align: right;
+      font-size: 0.85rem;
+      color: var(--text-dark);
+    }
+
+    .letter-ref-badge strong {
+      display: block;
+      color: var(--primary);
+      font-family: monospace;
+      font-size: 0.95rem;
+    }
+
+    .letter-title-banner {
+      text-align: center;
+      margin: 1.5rem 0 2rem 0;
+    }
+
+    .letter-title-banner h3 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 0.25rem;
+      text-decoration: underline;
+      text-underline-offset: 6px;
+      text-decoration-color: var(--accent);
+    }
+
+    .letter-grid-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      background: var(--secondary-bg);
+      padding: 1.25rem 1.5rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+
+    .letter-body-content {
+      font-size: 0.975rem;
+      line-height: 1.8;
+      color: var(--text-dark);
+      margin-bottom: 2.5rem;
+    }
+
+    .letter-body-content p {
+      margin-bottom: 1.25rem;
+    }
+
+    .letter-signature-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    .signature-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .signature-line {
+      font-family: 'Georgia', serif;
+      font-style: italic;
+      font-size: 1.5rem;
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    .seal-stamp-box {
+      width: 100px;
+      height: 100px;
+      border: 2px dashed var(--accent);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 0.5rem;
+      background: #FFFDF5;
+      transform: rotate(-8deg);
+    }
+
+    /* Modal Styling */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(9, 33, 68, 0.8);
+      backdrop-filter: blur(6px);
+      z-index: 1200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition-fast);
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      background: var(--white);
+      width: 100%;
+      max-width: 520px;
+      border-radius: var(--radius-lg);
+      padding: 2.25rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border);
+      text-align: center;
+      transform: translateY(20px) scale(0.95);
+      transition: var(--transition-smooth);
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-icon-badge {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem auto;
+      background-color: #D1FAE5;
+      color: #059669;
+      border: 2px solid #10B981;
+    }
+
+    @media (max-width: 768px) {
+      .letter-document-wrapper {
+        padding: 2rem 1.25rem;
+      }
+      .letter-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .letter-ref-badge {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================= -->
+  <!-- HEADER & NAVIGATION                                       -->
+  <!-- ========================================================= -->
+  <header id="header" class="header">
+    <div class="container header-container">
+      <!-- Logo Block -->
+      <a href="index.html#/home" class="logo-link" id="logo-nav-link">
+        <div class="logo-img-wrapper">
+          <img src="/src/assets/images/school_crest_logo_1784645340046.jpg" alt="His Grace School Agbugburu Logo" class="logo-img" referrerPolicy="no-referrer">
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">His Grace School</span>
+          <span class="logo-subtitle">Agbugburu</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Menu -->
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="index.html#/home" class="nav-link">Home</a></li>
+        <li><a href="index.html#/about" class="nav-link">About Us</a></li>
+        <li><a href="index.html#/admission" class="nav-link">Admission</a></li>
+        <li><a href="index.html#/gallery" class="nav-link">Gallery</a></li>
+        <li><a href="index.html#/contact" class="nav-link">Contact Us</a></li>
+        
+        <!-- Portal Dropdown (Active Applicant Portal) -->
+        <li class="dropdown active" id="portal-dropdown">
+          <span class="nav-link dropdown-toggle">
+            Portal
+            <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
+          <ul class="dropdown-menu">
+            <li class="dropdown-item"><a href="applicant-dashboard.html" class="dropdown-link active">Applicant Portal</a></li>
+            <li class="dropdown-item"><a href="#" class="dropdown-link portal-link">Student Portal</a></li>
+            <li class="dropdown-item"><a href="#" class="dropdown-link portal-link">Teacher Portal</a></li>
+            <li class="dropdown-item"><a href="admin-admission-review.html" class="dropdown-link">Administrator Portal</a></li>
+          </ul>
+        </li>
+      </ul>
+
+      <!-- Mobile Toggle -->
+      <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================================= -->
+  <!-- MAIN CONTENT                                              -->
+  <!-- ========================================================= -->
+  <main class="page-view active" style="margin-top: var(--header-height);">
+    
+    <!-- PAGE BANNER -->
+    <section class="page-banner">
+      <div class="hero-bg-wrapper">
+        <img src="/src/assets/images/students_classroom_1784645353103.jpg" alt="His Grace School Classroom" class="hero-bg" style="opacity: 0.15;" referrerPolicy="no-referrer">
+      </div>
+      <div class="hero-overlay" style="background: linear-gradient(135deg, rgba(18, 62, 124, 0.95) 0%, rgba(9, 33, 68, 0.98) 100%);"></div>
+      <div class="container page-banner-container" style="position: relative; z-index: 5;">
+        <h1>Admission Decision</h1>
+        <p class="hero-subtitle" style="color: rgba(255, 255, 255, 0.9); font-size: 1.15rem; font-weight: 400; margin-top: 0.5rem; margin-bottom: 1.5rem; max-width: 650px;">
+          View the current status of your admission application.
+        </p>
+        <ul class="breadcrumbs">
+          <li><a href="index.html#/home">Home</a></li>
+          <li><a href="applicant-dashboard.html">Applicant Dashboard</a></li>
+          <li>Admission Decision</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- DECISION CONTENT SECTION -->
+    <section class="section section-bg" style="background-color: var(--secondary-bg); padding: 3.5rem 0;">
+      <div class="container">
+        
+        <div class="decision-page-container">
+
+          <!-- DEMO SWITCHER BAR (Allows toggling between Approved, Under Review, and Rejected) -->
+          <div class="state-switcher-bar">
+            <span class="state-switcher-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              Preview Decision States:
+            </span>
+            <div class="state-pills">
+              <button type="button" class="state-pill-btn active" data-state="approved">Approved</button>
+              <button type="button" class="state-pill-btn" data-state="under-review">Under Review</button>
+              <button type="button" class="state-pill-btn" data-state="rejected">Rejected</button>
+            </div>
+          </div>
+
+          <!-- STATUS CARD (Dynamic 3 States) -->
+          <div class="decision-status-card status-state-approved" id="decision-status-card">
+            <div class="decision-header-flex">
+              <div class="applicant-meta-block">
+                <span style="font-size: 0.8rem; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Application Reference</span>
+                <h3 id="decision-applicant-fullname">Adebayo Samuel Oluwaseun</h3>
+                <div class="applicant-meta-info">
+                  <span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    ID: <strong style="color: var(--primary); font-family: monospace;" id="decision-applicant-id">HGS-2026-8942</strong>
+                  </span>
+                  <span>•</span>
+                  <span>Desired Class: <strong style="color: var(--primary);" id="decision-desired-class">JSS 1</strong></span>
+                  <span>•</span>
+                  <span>Session: <strong style="color: var(--primary);" id="decision-session">2026/2027</strong></span>
+                </div>
+              </div>
+
+              <!-- Large Status Badge -->
+              <div id="status-badge-container">
+                <span class="large-status-badge approved" id="large-status-badge">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  Approved
+                </span>
+              </div>
+            </div>
+
+            <!-- Message Box -->
+            <div class="decision-message-box" id="decision-message-box">
+              <strong style="display: block; font-weight: 700; font-size: 1.1rem; margin-bottom: 0.35rem;" id="decision-msg-title">
+                Congratulations! You have been offered provisional admission.
+              </strong>
+              <span id="decision-msg-body">
+                The school management board has officially evaluated your credentials and entrance assessment results. You are hereby invited to accept your provisional offer and proceed with registration.
+              </span>
+            </div>
+
+            <!-- Action Toolbar (Dynamic per status) -->
+            <div class="action-toolbar" id="action-toolbar">
+              <!-- Approved Actions -->
+              <div id="approved-actions" style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
+                <button type="button" class="btn btn-outline" id="btn-view-letter">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                  View Admission Letter
+                </button>
+                
+                <button type="button" class="btn btn-outline" id="btn-download-letter">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  Download Admission Letter
+                </button>
+
+                <button type="button" class="btn btn-primary" id="btn-accept-admission" style="background-color: #10B981; border-color: #10B981; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  Accept Admission
+                </button>
+              </div>
+
+              <!-- Under Review Actions (Hidden by default) -->
+              <div id="under-review-actions" style="display: none; gap: 0.85rem; flex-wrap: wrap;">
+                <button type="button" class="btn btn-primary" id="btn-refresh-status">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                  Refresh Status
+                </button>
+              </div>
+
+              <!-- Rejected Actions (Hidden by default) -->
+              <div id="rejected-actions" style="display: none; gap: 0.85rem; flex-wrap: wrap;">
+                <a href="applicant-dashboard.html" class="btn btn-outline" id="btn-return-dashboard">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                  Return to Dashboard
+                </a>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- OFFICIAL ADMISSION LETTER PREVIEW (Displayed when Approved) -->
+          <div id="admission-letter-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <h3 style="margin-bottom: 0; color: var(--primary); font-size: 1.35rem;">Official Admission Letter</h3>
+              <span style="font-size: 0.825rem; color: var(--text-muted); font-weight: 600;">Provisional Admission Offer Document</span>
+            </div>
+
+            <div class="letter-document-wrapper" id="letter-document">
+              <!-- Letter Header -->
+              <div class="letter-header">
+                <div class="letter-school-brand">
+                  <img src="/src/assets/images/school_crest_logo_1784645340046.jpg" alt="His Grace School Crest" class="letter-crest-img" referrerPolicy="no-referrer">
+                  <div class="letter-school-titles">
+                    <h2>HIS GRACE SCHOOL AGBUGBURU</h2>
+                    <div class="letter-school-motto">MOLDING LIVES FOR GREATNESS</div>
+                    <div class="letter-school-address">
+                      Agbugburu Village, Odeda LGA, Abeokuta, Ogun State, Nigeria<br>
+                      Email: hisgraceschoolagbugburu@gmail.com | Tel: 09034014865, 08068045866
+                    </div>
+                  </div>
+                </div>
+
+                <div class="letter-ref-badge">
+                  <span>Date: <strong>21st July 2026</strong></span>
+                  <span style="margin-top: 0.25rem; display: block;">Ref No: <strong>HGS/ADM/2026/8942</strong></span>
+                </div>
+              </div>
+
+              <!-- Banner Title -->
+              <div class="letter-title-banner">
+                <h3>PROVISIONAL OFFER OF ADMISSION</h3>
+              </div>
+
+              <!-- Details Grid -->
+              <div class="letter-grid-details">
+                <div>
+                  <span class="summary-label">Applicant Name</span>
+                  <span class="summary-value" style="color: var(--primary); font-weight: 700;">Adebayo Samuel Oluwaseun</span>
+                </div>
+                <div>
+                  <span class="summary-label">Applicant ID</span>
+                  <span class="summary-value" style="font-family: monospace;">HGS-2026-8942</span>
+                </div>
+                <div>
+                  <span class="summary-label">Class Offered</span>
+                  <span class="summary-value" style="color: #059669; font-weight: 700;">JSS 1 (Junior Secondary)</span>
+                </div>
+                <div>
+                  <span class="summary-label">Academic Session</span>
+                  <span class="summary-value">2026/2027 Session</span>
+                </div>
+              </div>
+
+              <!-- Letter Text Content -->
+              <div class="letter-body-content">
+                <p>Dear <strong>Adebayo Samuel Oluwaseun</strong>,</p>
+
+                <p>
+                  Following your recent application and successful evaluation by the Admissions Screening Committee of <strong>His Grace School Agbugburu</strong>, we are pleased to offer you provisional admission into <strong>JSS 1</strong> for the upcoming <strong>2026/2027 Academic Session</strong>.
+                </p>
+
+                <p>
+                  At His Grace School, we are highly committed to providing a solid foundation, academic excellence, and robust moral training. Dedicated to molding your child for a bright, great, and leadership-driven tomorrow.
+                </p>
+
+                <p>
+                  <strong>Terms and Next Steps:</strong><br>
+                  1. Kindly confirm your acceptance of this offer by clicking the <strong>Accept Admission</strong> button in your portal.<br>
+                  2. Complete the mandatory medical record check and submit remaining physical original credentials before resumption.<br>
+                  3. Resumption and orientation activities for new students commence on <strong>Monday, 14th September 2026</strong>.
+                </p>
+
+                <p>
+                  Congratulations once again on your selection. We look forward to welcoming you into our academic family.
+                </p>
+              </div>
+
+              <!-- Signatures & Stamp -->
+              <div class="letter-signature-row">
+                <div class="signature-block">
+                  <div class="signature-line">Mrs. A. O. Adeola</div>
+                  <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary);">Registrar & Head of Admissions</span>
+                  <span style="font-size: 0.775rem; color: var(--text-muted);">His Grace School Agbugburu</span>
+                </div>
+
+                <div class="seal-stamp-box">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 2px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                  <span>Official Seal</span>
+                  <span style="font-size: 0.55rem; color: var(--accent);">HGS AGBUGBURU</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+
+  <!-- ========================================================= -->
+  <!-- ACCEPT ADMISSION MODAL                                     -->
+  <!-- ========================================================= -->
+  <div class="modal-overlay" id="accept-admission-modal">
+    <div class="modal-card">
+      <div class="modal-icon-badge">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      
+      <h3 style="color: var(--primary); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem;">
+        Accept Admission Offer?
+      </h3>
+      
+      <p style="color: var(--text-dark); font-size: 0.975rem; line-height: 1.6; margin-bottom: 1.75rem;">
+        By accepting this admission, you agree to continue with the registration process at His Grace School Agbugburu.
+      </p>
+
+      <div style="display: flex; gap: 1rem; justify-content: center;">
+        <button type="button" class="btn btn-outline" id="btn-cancel-accept" style="padding: 0.75rem 1.5rem;">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" id="btn-confirm-accept" style="background-color: #10B981; border-color: #10B981; padding: 0.75rem 1.75rem; font-weight: 700;">
+          Accept
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================= -->
+  <!-- TOAST CONTAINER                                           -->
+  <!-- ========================================================= -->
+  <div id="toast-container" class="toast-container"></div>
+
+
+  <!-- ========================================================= -->
+  <!-- FOOTER                                                    -->
+  <!-- ========================================================= -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <!-- Column 1: School Identity -->
+      <div class="footer-logo-block">
+        <div class="footer-logo-wrapper">
+          <div class="logo-img-wrapper" style="width: 44px; height: 44px; border: 1px solid rgba(255, 255, 255, 0.15); background-color: white;">
+            <img src="/src/assets/images/school_crest_logo_1784645340046.jpg" alt="His Grace School Agbugburu Crest" class="logo-img" referrerPolicy="no-referrer">
+          </div>
+          <span class="footer-logo-title">His Grace School</span>
+        </div>
+        <p class="footer-school-desc">We are highly committed to providing a solid foundation, academic excellence, and robust moral training. Dedicated to molding your child for a bright, great, and leadership-driven tomorrow.</p>
+        <p class="footer-school-desc" style="color: var(--accent); font-weight: 600; letter-spacing: 2px;">MOLDING LIVES FOR GREATNESS</p>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div>
+        <h3 class="footer-heading">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="index.html#/home" class="footer-link">Home</a></li>
+          <li><a href="index.html#/about" class="footer-link">About Us</a></li>
+          <li><a href="index.html#/admission" class="footer-link">Admission Guide</a></li>
+          <li><a href="index.html#/gallery" class="footer-link">School Gallery</a></li>
+          <li><a href="index.html#/contact" class="footer-link">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Contact & Address -->
+      <div>
+        <h3 class="footer-heading">Our Contact</h3>
+        <ul class="footer-contact-list">
+          <li class="footer-contact-item">
+            <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span>Agbugburu Village, Odeda Local Government, Abeokuta, Ogun State, Nigeria.</span>
+          </li>
+          <li class="footer-contact-item">
+            <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <span>hisgraceschoolagbugburu@gmail.com</span>
+          </li>
+          <li class="footer-contact-item">
+            <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            <span>09034014865, 08068045866</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Footer Copyright -->
+    <div class="container footer-bottom">
+      <p>&copy; 2026 His Grace School Agbugburu. All rights reserved.</p>
+      <p style="font-size: 0.75rem;">Admission Decision & Letter Module V3</p>
+    </div>
+  </footer>
+
+  <!-- Page Logic -->
+  <script src="js/admission-decision.js" defer></script>
+</body>
+</html>
