@@ -17,6 +17,7 @@ export default defineConfig(() => {
           main: path.resolve(__dirname, 'index.html'),
           register: path.resolve(__dirname, 'applicant-register.html'),
           login: path.resolve(__dirname, 'applicant-login.html'),
+          forgotPassword: path.resolve(__dirname, 'forgot-password.html'),
         },
       },
     },
