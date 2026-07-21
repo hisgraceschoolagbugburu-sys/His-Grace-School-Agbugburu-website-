@@ -1,0 +1,87 @@
+{
+  "entities": {
+    "Applicant": {
+      "title": "Applicant",
+      "description": "Admission applicant profile and form data",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth User UID" },
+        "applicantId": { "type": "string", "description": "Unique applicant ID" },
+        "surname": { "type": "string", "maxLength": 100 },
+        "firstName": { "type": "string", "maxLength": 100 },
+        "otherNames": { "type": "string", "maxLength": 100 },
+        "gender": { "type": "string", "enum": ["Male", "Female"] },
+        "dateOfBirth": { "type": "string" },
+        "applyingForClass": { "type": "string" },
+        "academicSession": { "type": "string" },
+        "parentFullName": { "type": "string", "maxLength": 150 },
+        "parentPhone": { "type": "string", "maxLength": 20 },
+        "parentEmail": { "type": "string", "format": "email" },
+        "residentialAddress": { "type": "string", "maxLength": 500 },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string", "maxLength": 20 },
+        "status": { "type": "string", "enum": ["Draft", "Pending", "Approved", "Rejected", "Interview Scheduled"] },
+        "role": { "type": "string", "enum": ["applicant"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["uid", "surname", "firstName", "email", "role"]
+    },
+    "Administrator": {
+      "title": "Administrator",
+      "description": "School administrator profile",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "username": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "fullName": { "type": "string" },
+        "role": { "type": "string", "enum": ["administrator"] }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Teacher": {
+      "title": "Teacher",
+      "description": "Teacher staff profile",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "staffId": { "type": "string" },
+        "fullName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["teacher"] }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Student": {
+      "title": "Student",
+      "description": "Enrolled student record",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "studentId": { "type": "string" },
+        "fullName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["student"] }
+      },
+      "required": ["uid", "email", "role"]
+    }
+  },
+  "firestore": {
+    "/applicants/{applicantId}": {
+      "schema": "Applicant",
+      "description": "Collection of admission applicants"
+    },
+    "/administrators/{adminId}": {
+      "schema": "Administrator",
+      "description": "Collection of system administrators"
+    },
+    "/teachers/{teacherId}": {
+      "schema": "Teacher",
+      "description": "Collection of school teachers"
+    },
+    "/students/{studentId}": {
+      "schema": "Student",
+      "description": "Collection of enrolled students"
+    }
+  }
+}

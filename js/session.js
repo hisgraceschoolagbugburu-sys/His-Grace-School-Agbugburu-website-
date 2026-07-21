@@ -2,14 +2,17 @@
  * HIS GRACE SCHOOL AGBUGBURU
  * Reusable Session Management Architecture (HGS_SESSION)
  * Maintains client session state, role validation guards, local storage sync,
- * and future listener hooks for Firebase Authentication onAuthStateChanged.
+ * and Firebase Authentication state listeners.
  */
+
+import { auth, db } from './firebase.js';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 
 (function (global) {
   'use strict';
 
   const SESSION_KEY = "hgs_user_session_v1";
-  const CONFIG = global.HGS_CONFIG || {};
 
   /**
    * HGS_SESSION Object
@@ -17,7 +20,7 @@
   const HGS_SESSION = {
     
     /**
-     * Retrieves the currently active user session object.
+     * Retrieves the currently active user session object from localStorage.
      * @returns {Object|null} User session object or null if unauthenticated.
      */
     getCurrentUser: function () {
@@ -27,7 +30,6 @@
 
         const session = JSON.parse(rawData);
         
-        // Check session expiration (if timestamp present)
         if (session.expiresAt && new Date().getTime() > session.expiresAt) {
           this.clearSession();
           return null;
@@ -56,7 +58,7 @@
     saveSession: function (user, expiryMinutes) {
       if (!user) return;
 
-      const duration = expiryMinutes || (CONFIG.system ? CONFIG.system.sessionExpiryMinutes : 120);
+      const duration = expiryMinutes || 120; // Default 2 hours
       const expiresAt = new Date().getTime() + (duration * 60 * 1000);
 
       const sessionPayload = {
@@ -68,10 +70,10 @@
       try {
         localStorage.setItem(SESSION_KEY, JSON.stringify(sessionPayload));
         
-        // Also sync role-specific storage flags for legacy compatibility
+        // Role flags for legacy compatibility
         if (user.role === 'administrator') {
           localStorage.setItem('hgs_admin_logged_in', 'true');
-          localStorage.setItem('hgs_admin_name', user.displayName || 'Administrator');
+          localStorage.setItem('hgs_admin_name', user.displayName || user.fullName || 'Administrator');
         } else if (user.role === 'teacher') {
           localStorage.setItem('hgs_teacher_logged_in', 'true');
         } else if (user.role === 'student') {
@@ -94,7 +96,6 @@
         const prevUser = this.getCurrentUser();
         localStorage.removeItem(SESSION_KEY);
         
-        // Clear legacy session items
         localStorage.removeItem('hgs_admin_logged_in');
         localStorage.removeItem('hgs_teacher_logged_in');
         localStorage.removeItem('hgs_student_logged_in');
@@ -117,18 +118,14 @@
      */
     requireAuthentication: function (allowedRoles, fallbackRedirect) {
       const user = this.getCurrentUser();
-
-      // Normalize allowedRoles array
       const rolesArray = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
 
       if (!user) {
-        // Redirect to appropriate login based on requested role
         const targetLogin = fallbackRedirect || this._getLoginRedirectForRole(rolesArray[0]);
         window.location.href = targetLogin;
         return false;
       }
 
-      // Check role authorization (Super Admin always authorized)
       if (user.role !== 'administrator' && rolesArray.length > 0 && !rolesArray.includes(user.role)) {
         console.warn(`User role '${user.role}' not authorized for required roles:`, rolesArray);
         const targetLogin = fallbackRedirect || this._getLoginRedirectForRole(rolesArray[0]);
@@ -137,31 +134,6 @@
       }
 
       return user;
-    },
-
-    /**
-     * Refreshes current session expiration timestamp
-     */
-    refreshSessionToken: function () {
-      const user = this.getCurrentUser();
-      if (user) {
-        this.saveSession(user);
-      }
-    },
-
-    /**
-     * Future Firebase Integration Point:
-     * Connects to firebase.auth().onAuthStateChanged((firebaseUser) => { ... })
-     * Automatically updates local session state when Firebase Auth state shifts.
-     *
-     * @param {Function} callback - Subscriber function receiving (user, eventType)
-     */
-    subscribeSessionChanges: function (callback) {
-      if (typeof callback === 'function') {
-        window.addEventListener('HGS_SESSION_CHANGED', (event) => {
-          callback(event.detail ? event.detail.user : null, event.detail ? event.detail.type : 'CHANGE');
-        });
-      }
     },
 
     /**
@@ -194,7 +166,7 @@
         case 'student':
           return 'student-login.html';
         case 'applicant':
-          return 'applicant-register.html';
+          return 'applicant-login.html';
         default:
           return 'index.html#/home';
       }
@@ -204,4 +176,53 @@
   // Attach to global window object
   global.HGS_SESSION = Object.freeze(HGS_SESSION);
 
+  // Synchronize with Firebase Auth Listener
+  onAuthStateChanged(auth, async (firebaseUser) => {
+    if (firebaseUser) {
+      // Check Firestore collections for role profile
+      try {
+        let profile = null;
+        const uid = firebaseUser.uid;
+
+        // Try applicants first
+        const appSnap = await getDoc(doc(db, 'applicants', uid));
+        if (appSnap.exists()) {
+          profile = { uid: uid, email: firebaseUser.email, ...appSnap.data(), role: 'applicant' };
+        } else {
+          // Try admin
+          const adminSnap = await getDoc(doc(db, 'administrators', uid));
+          if (adminSnap.exists()) {
+            profile = { uid: uid, email: firebaseUser.email, ...adminSnap.data(), role: 'administrator' };
+          } else {
+            // Try teachers
+            const tchSnap = await getDoc(doc(db, 'teachers', uid));
+            if (tchSnap.exists()) {
+              profile = { uid: uid, email: firebaseUser.email, ...tchSnap.data(), role: 'teacher' };
+            } else {
+              // Try students
+              const stdSnap = await getDoc(doc(db, 'students', uid));
+              if (stdSnap.exists()) {
+                profile = { uid: uid, email: firebaseUser.email, ...stdSnap.data(), role: 'student' };
+              } else {
+                profile = {
+                  uid: uid,
+                  email: firebaseUser.email,
+                  displayName: firebaseUser.displayName || firebaseUser.email.split('@')[0],
+                  role: 'applicant'
+                };
+              }
+            }
+          }
+        }
+        HGS_SESSION.saveSession(profile);
+      } catch (err) {
+        console.error("Error fetching user profile on auth change:", err);
+      }
+    } else {
+      HGS_SESSION.clearSession();
+    }
+  });
+
 })(typeof window !== 'undefined' ? window : this);
+
+export const HGS_SESSION = window.HGS_SESSION;

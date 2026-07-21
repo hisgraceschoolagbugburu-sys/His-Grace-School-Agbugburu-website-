@@ -1,8 +1,10 @@
 /**
  * HIS GRACE SCHOOL AGBUGBURU
  * Applicant Registration Script
- * Handles form validation, password toggling, strength meter, and simulated account creation.
+ * Handles form validation, password toggling, strength meter, and Firebase registration.
  */
+
+import { HGS_AUTH } from './auth.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // --- DOM ELEMENTS ---
@@ -41,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Steps
   const stepNode1 = document.getElementById('step-node-1');
   const stepNode2 = document.getElementById('step-node-2');
-  const stepNode3 = document.getElementById('step-node-3');
 
   // --- STICKY NAV ON SCROLL ---
   window.addEventListener('scroll', () => {
@@ -60,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Handle mobile portal dropdown toggle
   if (portalDropdown) {
     const portalToggle = portalDropdown.querySelector('.dropdown-toggle');
     if (portalToggle) {
@@ -105,26 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 4500);
   };
 
-  // --- INTERCEPT PORTALS ---
-  const portalLinks = document.querySelectorAll('.portal-link');
-  portalLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const portalName = link.textContent.trim();
-      
-      const calendarIcon = `
-        <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-          <line x1="16" y1="2" x2="16" y2="6"></line>
-          <line x1="8" y1="2" x2="8" y2="6"></line>
-          <line x1="3" y1="10" x2="21" y2="10"></line>
-        </svg>
-      `;
-
-      showToast(`${portalName} will be available in a future phase! (Administrator system preparation underway)`, calendarIcon);
-    });
-  });
-
   // --- TOGGLE PASSWORD VISIBILITY ---
   const initPasswordToggle = (btn, input) => {
     if (!btn || !input) return;
@@ -132,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const isPassword = input.type === 'password';
       input.type = isPassword ? 'text' : 'password';
       
-      // Update eye icon simple visual state
       btn.innerHTML = isPassword ? `
         <svg class="toggle-icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
@@ -163,7 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
       strengthMeter.style.display = 'block';
       strengthLabel.style.display = 'block';
 
-      // Simple rating logic
       let score = 0;
       if (password.length >= 8) score += 20;
       if (password.length >= 12) score += 10;
@@ -172,15 +150,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (/[0-9]/.test(password)) score += 15;
       if (/[^A-Za-z0-9]/.test(password)) score += 20;
 
-      // Update color and label
-      let color = '#EF4444'; // weak (red)
+      let color = '#EF4444';
       let label = 'Strength: Weak';
 
       if (score >= 80) {
-        color = '#10B981'; // strong (green)
+        color = '#10B981';
         label = 'Strength: Excellent (Strong)';
       } else if (score >= 50) {
-        color = '#F59E0B'; // medium (amber)
+        color = '#F59E0B';
         label = 'Strength: Good (Medium)';
       } else if (password.length > 0 && password.length < 8) {
         label = 'Strength: Too Short (Min 8)';
@@ -200,7 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const validatePhone = (phone) => {
-    // Strip everything except numbers and optional starting +
     const cleanPhone = phone.replace(/[^0-9]/g, '');
     return cleanPhone.length >= 10 && cleanPhone.length <= 15;
   };
@@ -218,7 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Clear all error states
   const clearErrors = () => {
     const inputs = registrationForm.querySelectorAll('.form-control');
     inputs.forEach(input => input.classList.remove('is-invalid'));
@@ -229,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- REGISTRATION FORM SUBMIT ---
   if (registrationForm) {
-    registrationForm.addEventListener('submit', (e) => {
+    registrationForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       clearErrors();
 
@@ -244,138 +219,94 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       };
 
-      // 1. Surname (Required)
       const surname = surnameInput.value.trim();
-      if (!surname) {
-        setInvalid(surnameInput, 'error-surname');
-      }
+      if (!surname) setInvalid(surnameInput, 'error-surname');
 
-      // 2. First Name (Required)
       const firstname = firstnameInput.value.trim();
-      if (!firstname) {
-        setInvalid(firstnameInput, 'error-firstname');
-      }
+      if (!firstname) setInvalid(firstnameInput, 'error-firstname');
 
-      // 3. Gender (Required)
+      const othername = othernameInput ? othernameInput.value.trim() : '';
+
       const gender = genderInput.value;
-      if (!gender) {
-        setInvalid(genderInput, 'error-gender');
-      }
+      if (!gender) setInvalid(genderInput, 'error-gender');
 
-      // 4. DOB (Required & valid)
       const dob = dobInput.value;
       if (!dob) {
         setInvalid(dobInput, 'error-dob');
       } else {
         const dobDate = new Date(dob);
-        const today = new Date();
-        if (dobDate >= today) {
-          setInvalid(dobInput, 'error-dob');
-        }
+        if (dobDate >= new Date()) setInvalid(dobInput, 'error-dob');
       }
 
-      // 5. Desired Class (Required)
       const desiredClass = classInput.value;
-      if (!desiredClass) {
-        setInvalid(classInput, 'error-class');
-      }
+      if (!desiredClass) setInvalid(classInput, 'error-class');
 
-      // 6. Parent/Guardian Full Name (Required)
       const guardian = guardianInput.value.trim();
-      if (!guardian) {
-        setInvalid(guardianInput, 'error-guardian');
-      }
+      if (!guardian) setInvalid(guardianInput, 'error-guardian');
 
-      // 7. Parent/Guardian Phone (Required & Format)
       const guardianPhone = guardianPhoneInput.value.trim();
-      if (!guardianPhone || !validatePhone(guardianPhone)) {
-        setInvalid(guardianPhoneInput, 'error-guardian-phone');
-      }
+      if (!guardianPhone || !validatePhone(guardianPhone)) setInvalid(guardianPhoneInput, 'error-guardian-phone');
 
-      // 8. Residential Address (Required)
       const address = addressInput.value.trim();
-      if (!address) {
-        setInvalid(addressInput, 'error-address');
-      }
+      if (!address) setInvalid(addressInput, 'error-address');
 
-      // 9. Email (Required & Format)
       const email = emailInput.value.trim();
-      if (!email || !validateEmail(email)) {
-        setInvalid(emailInput, 'error-email');
-      }
+      if (!email || !validateEmail(email)) setInvalid(emailInput, 'error-email');
 
-      // 10. Phone (Required & Format)
       const phone = phoneInput.value.trim();
-      if (!phone || !validatePhone(phone)) {
-        setInvalid(phoneInput, 'error-phone');
-      }
+      if (!phone || !validatePhone(phone)) setInvalid(phoneInput, 'error-phone');
 
-      // 11. Password (Required & Length)
       const password = passwordInput.value;
-      if (!password || password.length < 8) {
-        setInvalid(passwordInput, 'error-password');
-      }
+      if (!password || password.length < 8) setInvalid(passwordInput, 'error-password');
 
-      // 12. Confirm Password (Required & Match)
       const confirmPassword = confirmPasswordInput.value;
-      if (!confirmPassword || confirmPassword !== password) {
-        setInvalid(confirmPasswordInput, 'error-confirm-password');
-      }
+      if (!confirmPassword || confirmPassword !== password) setInvalid(confirmPasswordInput, 'error-confirm-password');
 
-      // --- HANDLE ERROR FLOW ---
       if (!isValid) {
-        // Scroll smoothly to first invalid input field
         if (firstInvalidElement) {
           firstInvalidElement.focus();
-          firstInvalidElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-          });
+          firstInvalidElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-
-        const alertIcon = `
-          <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="16" x2="12" y2="12"></line>
-            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-          </svg>
-        `;
-        showToast("Please correct the errors in the registration form.", alertIcon);
+        showToast("Please correct the errors in the registration form.");
         return;
       }
 
-      // --- HANDLE SUCCESS FLOW (SIMULATED PROCESSING) ---
       const submitBtn = registrationForm.querySelector('button[type="submit"]');
       const originalBtnText = submitBtn.innerHTML;
-      
-      // Spinner styling
+
       submitBtn.disabled = true;
       submitBtn.innerHTML = `
         <svg class="animate-spin" style="animation: spin 1s linear infinite; width: 20px; height: 20px; margin-right: 8px; display: inline-block; vertical-align: middle;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
           <circle cx="12" cy="12" r="10" style="opacity: 0.25;"></circle>
           <path d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4z" style="opacity: 0.75;"></path>
         </svg>
-        Establishing Admission Profile...
+        Registering Account in Firebase...
       `;
 
-      setTimeout(() => {
-        // Progress steps visual updates
+      try {
+        const result = await HGS_AUTH.registerApplicant({
+          email,
+          password,
+          surname,
+          firstname,
+          othername,
+          gender,
+          dob,
+          desiredClass,
+          guardian,
+          guardianPhone,
+          address,
+          phone
+        });
+
         if (stepNode1) {
           stepNode1.classList.remove('active');
           stepNode1.classList.add('completed');
-          stepNode1.innerHTML = `
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            <span class="step-node-label" style="color: var(--accent);">Profile Setup</span>
-          `;
         }
-
         if (stepNode2) {
           stepNode2.classList.add('active');
         }
 
-        // Display Success Banner
         if (registrationAlert) {
           registrationAlert.className = "form-alert success";
           registrationAlert.innerHTML = `
@@ -386,12 +317,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 </svg>
               </div>
               <div>
-                <h4 style="color: #03543F; font-size: 1.15rem; font-weight: 700; margin-bottom: 0.25rem;">Admission Profile Created Successfully!</h4>
+                <h4 style="color: #03543F; font-size: 1.15rem; font-weight: 700; margin-bottom: 0.25rem;">Admission Profile Registered!</h4>
                 <p style="color: #046A4F; font-size: 0.95rem; line-height: 1.5; margin-bottom: 0.5rem; font-weight: 500;">
-                  Admission account profile for <strong>${firstname} ${surname}</strong> has been created.
+                  Admission profile for <strong>${firstname} ${surname}</strong> (ID: <strong>${result.user.applicantId}</strong>) has been saved to Firebase Firestore.
                 </p>
                 <p style="color: #046A4F; font-size: 0.9rem; line-height: 1.5; margin-bottom: 0;">
-                  <strong>Note:</strong> Your login credentials have been configured. The applicant login page and full multi-page admission form dashboard will be fully operational in the next phase of development. You do not need to take any further action now.
+                  Redirecting to your Applicant Dashboard...
                 </p>
               </div>
             </div>
@@ -402,31 +333,45 @@ document.addEventListener('DOMContentLoaded', () => {
           registrationAlert.style.marginBottom = "2rem";
         }
 
-        // Restore button state
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalBtnText;
 
-        // Reset form fields
-        registrationForm.reset();
-        if (strengthMeter) strengthMeter.style.display = 'none';
-        if (strengthLabel) strengthLabel.style.display = 'none';
-
-        // Scroll smoothly to success alert
-        registrationAlert.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
-
-        // Dynamic success sound/toast feedback
         const checkIcon = `
           <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
         `;
-        showToast("Profile registered successfully! Proceeding to next phase...", checkIcon);
+        showToast("Profile registered successfully! Opening dashboard...", checkIcon);
 
-      }, 1500);
+        setTimeout(() => {
+          window.location.href = 'applicant-dashboard.html';
+        }, 1200);
 
+      } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+
+        let errorMsg = err.message || "Failed to create account. Please try again.";
+        if (err.code === "auth/email-already-in-use") {
+          errorMsg = "An account with this email address already exists. Please log in instead.";
+        } else if (err.code === "auth/weak-password") {
+          errorMsg = "Password is too weak. Minimum 8 characters required.";
+        } else if (err.code === "auth/invalid-email") {
+          errorMsg = "Invalid email format.";
+        }
+
+        if (registrationAlert) {
+          registrationAlert.className = "form-alert error";
+          registrationAlert.innerHTML = `
+            <div style="display: flex; gap: 1rem; align-items: center; background-color: #FEE2E2; color: #991B1B; padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid #FCA5A5;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              <span style="font-weight: 600;">${errorMsg}</span>
+            </div>
+          `;
+          registrationAlert.style.display = "block";
+          registrationAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
     });
   }
 });

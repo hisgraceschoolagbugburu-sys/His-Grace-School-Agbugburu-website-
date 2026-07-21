@@ -1,36 +1,28 @@
 /**
  * HIS GRACE SCHOOL AGBUGBURU
  * Authentication & Access Control Module (HGS_AUTH)
- * Manages user roles, permission validation, credential handling,
- * and future integration hooks for Firebase Authentication.
+ * Directly integrates with Firebase Authentication & Cloud Firestore.
  */
+
+import { auth, db } from './firebase.js';
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  sendPasswordResetEmail
+} from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 (function (global) {
   'use strict';
 
-  // Ensure HGS_CONFIG is present
-  const CONFIG = global.HGS_CONFIG || {
-    roles: {
-      ADMIN: "administrator",
-      TEACHER: "teacher",
-      STUDENT: "student",
-      APPLICANT: "applicant"
-    }
-  };
-
-  /**
-   * User Role Definitions
-   */
   const ROLES = Object.freeze({
-    ADMINISTRATOR: CONFIG.roles.ADMIN || "administrator",
-    TEACHER: CONFIG.roles.TEACHER || "teacher",
-    STUDENT: CONFIG.roles.STUDENT || "student",
-    APPLICANT: CONFIG.roles.APPLICANT || "applicant"
+    ADMINISTRATOR: "administrator",
+    TEACHER: "teacher",
+    STUDENT: "student",
+    APPLICANT: "applicant"
   });
 
-  /**
-   * Role Permission Matrix
-   */
   const PERMISSIONS = Object.freeze({
     [ROLES.ADMINISTRATOR]: [
       "manage_system_settings",
@@ -69,157 +61,163 @@
     ]
   });
 
-  /**
-   * HGS_AUTH Module Object
-   */
   const HGS_AUTH = {
     ROLES: ROLES,
     PERMISSIONS: PERMISSIONS,
 
     /**
-     * Future Firebase Integration Point:
-     * When Firebase is initialized in the next phase, this function will wrap:
-     * return firebase.auth().signInWithEmailAndPassword(email, password)
-     *   .then(userCredential => fetchFirestoreUserProfile(userCredential.user.uid))
-     * 
-     * Current Architecture Implementation:
-     * Validates input format, checks target role, and returns a structured user session object.
-     *
+     * Authenticates user via Firebase Authentication & fetches Firestore role profile.
      * @param {Object} credentials - { usernameOrEmail, password }
-     * @param {string} expectedRole - Role identifier ('administrator' | 'teacher' | 'student' | 'applicant')
+     * @param {string} [expectedRole] - Role identifier ('administrator' | 'teacher' | 'student' | 'applicant')
      * @returns {Promise<Object>} Promise resolving to authenticated user object
      */
-    loginUser: function (credentials, expectedRole) {
-      return new Promise((resolve, reject) => {
-        const { usernameOrEmail, password } = credentials || {};
+    loginUser: async function (credentials, expectedRole) {
+      const { usernameOrEmail, password } = credentials || {};
 
-        if (!usernameOrEmail || !password) {
-          return reject(new Error("Username/Email and Password are required."));
-        }
-
-        if (expectedRole && !Object.values(ROLES).includes(expectedRole)) {
-          return reject(new Error(`Invalid target role: ${expectedRole}`));
-        }
-
-        // Simulate local role check & user profile generation
-        setTimeout(() => {
-          const userProfile = {
-            uid: `usr_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
-            email: usernameOrEmail.includes('@') ? usernameOrEmail : `${usernameOrEmail}@hisgraceschool.edu.ng`,
-            username: usernameOrEmail,
-            role: expectedRole || ROLES.STUDENT,
-            displayName: this._generateDisplayName(usernameOrEmail, expectedRole),
-            authenticatedAt: new Date().toISOString(),
-            permissions: PERMISSIONS[expectedRole] || []
-          };
-
-          // Save session via HGS_SESSION module if present
-          if (global.HGS_SESSION && typeof global.HGS_SESSION.saveSession === 'function') {
-            global.HGS_SESSION.saveSession(userProfile);
-          }
-
-          /* FUTURE FIREBASE INTEGRATION NOTE:
-           * firebase.auth().signInWithEmailAndPassword(email, password)
-           *   .then(result => resolve(formatFirebaseUser(result.user)))
-           *   .catch(error => reject(error));
-           */
-
-          resolve({
-            success: true,
-            user: userProfile,
-            token: `mock_jwt_token_${Date.now()}`
-          });
-        }, 400);
-      });
-    },
-
-    /**
-     * Future Firebase Integration Point:
-     * return firebase.auth().signOut()
-     *
-     * Clears local user session and triggers logout events.
-     * @returns {Promise<boolean>}
-     */
-    logoutUser: function () {
-      return new Promise((resolve) => {
-        if (global.HGS_SESSION && typeof global.HGS_SESSION.clearSession === 'function') {
-          global.HGS_SESSION.clearSession();
-        }
-
-        /* FUTURE FIREBASE INTEGRATION NOTE:
-         * firebase.auth().signOut().then(() => resolve(true));
-         */
-
-        resolve(true);
-      });
-    },
-
-    /**
-     * Validates if a user has access to a specific role or permission.
-     *
-     * @param {string} requiredRole - Role required for page/module access
-     * @param {string} [requiredPermission] - Optional specific permission
-     * @returns {boolean}
-     */
-    checkRoleAccess: function (requiredRole, requiredPermission) {
-      const currentUser = global.HGS_SESSION ? global.HGS_SESSION.getCurrentUser() : null;
-
-      if (!currentUser) return false;
-
-      // Super Administrator bypass
-      if (currentUser.role === ROLES.ADMINISTRATOR) return true;
-
-      // Match Role
-      if (currentUser.role !== requiredRole) return false;
-
-      // Match Permission if specified
-      if (requiredPermission) {
-        const userPermissions = PERMISSIONS[currentUser.role] || [];
-        return userPermissions.includes(requiredPermission);
+      if (!usernameOrEmail || !password) {
+        throw new Error("Email and password are required.");
       }
 
+      // Format email
+      const email = usernameOrEmail.includes('@')
+        ? usernameOrEmail.trim()
+        : `${usernameOrEmail.trim()}@hisgraceschool.edu.ng`;
+
+      // 1. Firebase Auth Sign-In
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const firebaseUser = userCredential.user;
+      const uid = firebaseUser.uid;
+
+      // 2. Fetch User Profile from Firestore across collections
+      let userProfile = null;
+
+      // Check applicant
+      const appSnap = await getDoc(doc(db, 'applicants', uid));
+      if (appSnap.exists()) {
+        userProfile = { uid: uid, email: firebaseUser.email, ...appSnap.data(), role: ROLES.APPLICANT };
+      } else {
+        // Check administrator
+        const adminSnap = await getDoc(doc(db, 'administrators', uid));
+        if (adminSnap.exists()) {
+          userProfile = { uid: uid, email: firebaseUser.email, ...adminSnap.data(), role: ROLES.ADMINISTRATOR };
+        } else {
+          // Check teacher
+          const tchSnap = await getDoc(doc(db, 'teachers', uid));
+          if (tchSnap.exists()) {
+            userProfile = { uid: uid, email: firebaseUser.email, ...tchSnap.data(), role: ROLES.TEACHER };
+          } else {
+            // Check student
+            const stdSnap = await getDoc(doc(db, 'students', uid));
+            if (stdSnap.exists()) {
+              userProfile = { uid: uid, email: firebaseUser.email, ...stdSnap.data(), role: ROLES.STUDENT };
+            } else {
+              // Fallback
+              userProfile = {
+                uid: uid,
+                email: firebaseUser.email,
+                role: expectedRole || ROLES.APPLICANT,
+                displayName: firebaseUser.displayName || email.split('@')[0]
+              };
+            }
+          }
+        }
+      }
+
+      // Check Role match if expected
+      if (expectedRole && userProfile.role !== expectedRole && userProfile.role !== ROLES.ADMINISTRATOR) {
+        await signOut(auth);
+        throw new Error(`Account role '${userProfile.role}' is not authorized for the ${expectedRole} portal.`);
+      }
+
+      // 3. Save Session
+      if (global.HGS_SESSION && typeof global.HGS_SESSION.saveSession === 'function') {
+        global.HGS_SESSION.saveSession(userProfile);
+      }
+
+      return {
+        success: true,
+        user: userProfile
+      };
+    },
+
+    /**
+     * Registers a new Applicant account in Firebase Auth and creates Firestore applicant record.
+     * @param {Object} data - Applicant details from registration form
+     * @returns {Promise<Object>}
+     */
+    registerApplicant: async function (data) {
+      const { email, password, surname, firstname, othername, gender, dob, desiredClass, guardian, guardianPhone, address, phone } = data;
+
+      // 1. Create Firebase Auth User
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const firebaseUser = userCredential.user;
+      const uid = firebaseUser.uid;
+
+      const generatedApplicantId = `HGS-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+
+      // 2. Prepare Applicant Profile
+      const applicantProfile = {
+        uid: uid,
+        applicantId: generatedApplicantId,
+        surname: surname,
+        firstName: firstname,
+        otherNames: othername || '',
+        displayName: `${firstname} ${surname}`,
+        gender: gender,
+        dateOfBirth: dob,
+        applyingForClass: desiredClass,
+        academicSession: '2026/2027',
+        parentFullName: guardian,
+        parentPhone: guardianPhone,
+        parentEmail: email,
+        residentialAddress: address,
+        email: email,
+        phone: phone,
+        status: 'Draft',
+        role: ROLES.APPLICANT,
+        createdAt: new Date().toISOString()
+      };
+
+      // 3. Write to Cloud Firestore 'applicants' collection
+      await setDoc(doc(db, 'applicants', uid), applicantProfile);
+
+      // 4. Save Session
+      if (global.HGS_SESSION && typeof global.HGS_SESSION.saveSession === 'function') {
+        global.HGS_SESSION.saveSession(applicantProfile);
+      }
+
+      return {
+        success: true,
+        user: applicantProfile
+      };
+    },
+
+    /**
+     * Signs out user from Firebase Auth and clears session.
+     * @returns {Promise<boolean>}
+     */
+    logoutUser: async function () {
+      await signOut(auth);
+      if (global.HGS_SESSION && typeof global.HGS_SESSION.clearSession === 'function') {
+        global.HGS_SESSION.clearSession();
+      }
       return true;
     },
 
     /**
-     * Future Firebase Integration Point:
-     * return firebase.auth().sendPasswordResetEmail(email)
-     *
-     * Initiates password recovery process.
-     * @param {string} email - Registered email address
+     * Sends Password Reset Email via Firebase Auth.
+     * @param {string} email
      * @returns {Promise<Object>}
      */
-    resetPassword: function (email) {
-      return new Promise((resolve, reject) => {
-        if (!email || !email.includes('@')) {
-          return reject(new Error("Please enter a valid email address."));
-        }
-
-        setTimeout(() => {
-          /* FUTURE FIREBASE INTEGRATION NOTE:
-           * firebase.auth().sendPasswordResetEmail(email)
-           *   .then(() => resolve({ success: true, message: 'Reset email sent.' }))
-           *   .catch(err => reject(err));
-           */
-
-          resolve({
-            success: true,
-            message: `Password reset instructions sent to ${email}. Check your inbox or spam folder.`
-          });
-        }, 500);
-      });
-    },
-
-    /**
-     * Helper to format mock display names for roles
-     * @private
-     */
-    _generateDisplayName: function (username, role) {
-      if (role === ROLES.ADMINISTRATOR) return "Dr. Gabriel Okonjo";
-      if (role === ROLES.TEACHER) return "Mr. Emmanuel Adebayo";
-      if (role === ROLES.STUDENT) return "Adewale Okonjo";
-      if (role === ROLES.APPLICANT) return "Blessing Okonjo";
-      return username;
+    resetPassword: async function (email) {
+      if (!email || !email.includes('@')) {
+        throw new Error("Please enter a valid email address.");
+      }
+      await sendPasswordResetEmail(auth, email);
+      return {
+        success: true,
+        message: `Password reset link has been sent to ${email}. Please check your inbox.`
+      };
     }
   };
 
@@ -227,3 +225,5 @@
   global.HGS_AUTH = Object.freeze(HGS_AUTH);
 
 })(typeof window !== 'undefined' ? window : this);
+
+export const HGS_AUTH = window.HGS_AUTH;

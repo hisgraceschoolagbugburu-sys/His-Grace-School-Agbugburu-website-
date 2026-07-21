@@ -1,0 +1,109 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        exists(/databases/$(database)/documents/administrators/$(request.auth.uid)) ||
+        request.auth.token.email == "hisgraceschoolagbugburu@gmail.com"
+      );
+    }
+
+    function isTeacher() {
+      return isAuthenticated() && exists(/databases/$(database)/documents/teachers/$(request.auth.uid));
+    }
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Applicants Collection
+    match /applicants/{applicantId} {
+      allow read: if isOwner(applicantId) || isAdmin();
+      allow create: if isAuthenticated() && request.auth.uid == applicantId;
+      allow update: if isOwner(applicantId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Administrators Collection
+    match /administrators/{adminId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin() || isOwner(adminId);
+    }
+
+    // Teachers Collection
+    match /teachers/{teacherId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // Students Collection
+    match /students/{studentId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // Admissions Collection
+    match /admissions/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // Settings Collection
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // News Collection
+    match /news/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Gallery Collection
+    match /gallery/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Notifications Collection
+    match /notifications/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // Results Collection
+    match /results/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isTeacher() || isAdmin();
+    }
+
+    // Attendance Collection
+    match /attendance/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isTeacher() || isAdmin();
+    }
+
+    // Fees Collection
+    match /fees/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // Timetable Collection
+    match /timetable/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

@@ -1,16 +1,30 @@
 /**
  * HIS GRACE SCHOOL AGBUGBURU
  * Applicant Dashboard Script
- * Handles navigation, interactive sidebar links, quick link triggers, toasts, and logout workflow.
+ * Handles live applicant profile fetching from Cloud Firestore, UI updates, navigation, and logout workflow.
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+import { HGS_SESSION } from './session.js';
+import { HGS_AUTH } from './auth.js';
+import { HGS_DB } from './database.js';
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Check session / route guard
+  const user = HGS_SESSION.requireAuthentication(['applicant', 'administrator'], 'applicant-login.html');
+  if (!user) return; // Redirecting
+
   // --- DOM ELEMENTS ---
   const header = document.getElementById('header');
   const mobileToggle = document.getElementById('mobile-toggle');
   const navMenu = document.getElementById('nav-menu');
   const portalDropdown = document.getElementById('portal-dropdown');
   const toastContainer = document.getElementById('toast-container');
+
+  // Sidebar Elements
+  const sidebarAvatar = document.getElementById('profile-avatar');
+  const userDisplayName = document.getElementById('user-display-name');
+  const userIdEl = document.querySelector('.user-info .user-id');
+  const welcomeUserName = document.getElementById('welcome-user-name');
 
   // Sidebar Links
   const sidebarLinks = document.querySelectorAll('.sidebar-nav-link[data-target]');
@@ -40,7 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Handle mobile portal dropdown toggle
   if (portalDropdown) {
     const portalToggle = portalDropdown.querySelector('.dropdown-toggle');
     if (portalToggle) {
@@ -55,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- TOAST SYSTEM ---
   const showToast = (message, iconSVG = null) => {
+    if (!toastContainer) return;
     const toast = document.createElement('div');
     toast.className = 'toast';
     
@@ -85,6 +99,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 4500);
   };
 
+  // --- FETCH & POPULATE APPLICANT DATA FROM FIRESTORE ---
+  try {
+    let applicantData = await HGS_DB.dbGetDoc('applicants', user.uid);
+    if (!applicantData) {
+      applicantData = user; // Fallback to session data
+    }
+
+    const fullName = `${applicantData.firstName || ''} ${applicantData.surname || ''}`.trim() || applicantData.displayName || 'Applicant User';
+    const initials = (applicantData.firstName ? applicantData.firstName[0] : 'A') + (applicantData.surname ? applicantData.surname[0] : 'P');
+    const applicantId = applicantData.applicantId || `HGS-2026-${user.uid.slice(0, 4).toUpperCase()}`;
+
+    if (userDisplayName) userDisplayName.textContent = fullName;
+    if (welcomeUserName) welcomeUserName.textContent = fullName;
+    if (sidebarAvatar) sidebarAvatar.textContent = initials.toUpperCase();
+    if (userIdEl) userIdEl.textContent = `ID: ${applicantId}`;
+
+    // Update target class badge if element present
+    const targetClassEl = document.querySelector('#card-status strong');
+    if (targetClassEl && applicantData.applyingForClass) {
+      targetClassEl.textContent = applicantData.applyingForClass;
+    }
+
+    // Update status badge if element present
+    const statusBadge = document.querySelector('#card-status .badge-status');
+    if (statusBadge && applicantData.status) {
+      statusBadge.textContent = applicantData.status;
+      statusBadge.className = `badge-status ${applicantData.status.toLowerCase()}`;
+    }
+
+  } catch (err) {
+    console.error("Error loading applicant profile:", err);
+  }
+
   // --- INTERCEPT PORTALS ---
   const portalLinks = document.querySelectorAll('.portal-link');
   portalLinks.forEach(link => {
@@ -101,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </svg>
       `;
 
-      showToast(`${portalName} will be available in a future phase! (Administrator system preparation underway)`, calendarIcon);
+      showToast(`${portalName} navigation. Access granted based on current role permissions.`, calendarIcon);
     });
   });
 
@@ -110,7 +157,6 @@ document.addEventListener('DOMContentLoaded', () => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
       
-      // Update active sidebar state
       sidebarLinks.forEach(l => l.classList.remove('active'));
       link.classList.add('active');
 
@@ -124,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-      // Contextual toast feedback
       const checkIcon = `
         <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="20 6 9 17 4 12"></polyline>
@@ -132,11 +177,11 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
 
       if (targetId === 'section-profile') {
-        showToast("Profile Status: Not Completed. Full details will be captured in the application form.", checkIcon);
+        showToast("Profile Status: Active. Complete full details in the application form.", checkIcon);
       } else if (targetId === 'section-application') {
         showToast("Admission Application card highlighted.", checkIcon);
       } else if (targetId === 'section-status') {
-        showToast("Current Application Status: Draft.", checkIcon);
+        showToast("Current Application Status loaded.", checkIcon);
       } else if (targetId === 'section-notifications') {
         showToast("Notifications: No unread administrative messages.", checkIcon);
       }
@@ -151,14 +196,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (profileCard) {
         profileCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
-      showToast("Profile Status: Not Completed. You can complete full profile during form filling.");
     });
   }
 
   if (btnViewProfile) {
     btnViewProfile.addEventListener('click', (e) => {
       e.preventDefault();
-      showToast("Account Profile: Samuel Adebayo (Applicant ID: HGS-2026-8942).");
+      showToast(`Account Profile loaded for ${userDisplayName ? userDisplayName.textContent : 'Applicant'}.`);
     });
   }
 
@@ -169,14 +213,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (statusCard) {
         statusCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
-      showToast("Application Status: Draft (Pending form completion).");
     });
   }
 
-  // --- START APPLICATION FEEDBACK ---
   if (btnStartApplication) {
     btnStartApplication.addEventListener('click', (e) => {
-      // Don't intercept completely so browser attempts navigation to admission-application.html as requested
       const infoIcon = `
         <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="#123E7C" stroke-width="2">
           <circle cx="12" cy="12" r="10"></circle>
@@ -189,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- LOGOUT WORKFLOW ---
-  const handleLogout = (e) => {
+  const handleLogout = async (e) => {
     e.preventDefault();
     
     const logoutIcon = `
@@ -200,11 +241,17 @@ document.addEventListener('DOMContentLoaded', () => {
       </svg>
     `;
 
-    showToast("Signing out of applicant portal...", logoutIcon);
+    showToast("Signing out of Firebase Auth & Applicant Portal...", logoutIcon);
 
-    setTimeout(() => {
+    try {
+      await HGS_AUTH.logoutUser();
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 800);
+    } catch (err) {
+      console.error("Logout error:", err);
       window.location.href = 'index.html';
-    }, 1000);
+    }
   };
 
   if (sidebarLogoutBtn) {

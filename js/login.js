@@ -1,8 +1,10 @@
 /**
  * HIS GRACE SCHOOL AGBUGBURU
  * Applicant Login Script
- * Handles form validation, password toggling, visual loading indicators, and future Firebase notification banner.
+ * Handles form validation, password toggling, and Firebase Auth sign-in.
  */
+
+import { HGS_AUTH } from './auth.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // --- DOM ELEMENTS ---
@@ -17,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Form Inputs
   const emailInput = document.getElementById('login-email');
   const passwordInput = document.getElementById('login-password');
-  const rememberCheckbox = document.getElementById('login-remember');
 
   // Eye Toggle
   const togglePasswordBtn = document.getElementById('toggle-password');
@@ -39,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Handle mobile portal dropdown toggle
   if (portalDropdown) {
     const portalToggle = portalDropdown.querySelector('.dropdown-toggle');
     if (portalToggle) {
@@ -84,33 +84,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 4500);
   };
 
-  // --- INTERCEPT PORTALS ---
-  const portalLinks = document.querySelectorAll('.portal-link');
-  portalLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const portalName = link.textContent.trim();
-      
-      const calendarIcon = `
-        <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-          <line x1="16" y1="2" x2="16" y2="6"></line>
-          <line x1="8" y1="2" x2="8" y2="6"></line>
-          <line x1="3" y1="10" x2="21" y2="10"></line>
-        </svg>
-      `;
-
-      showToast(`${portalName} will be available in a future phase! (Administrator system preparation underway)`, calendarIcon);
-    });
-  });
-
   // --- TOGGLE PASSWORD VISIBILITY ---
   if (togglePasswordBtn && passwordInput) {
     togglePasswordBtn.addEventListener('click', () => {
       const isPassword = passwordInput.type === 'password';
       passwordInput.type = isPassword ? 'text' : 'password';
       
-      // Update eye icon simple visual state
       togglePasswordBtn.innerHTML = isPassword ? `
         <svg class="toggle-icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
@@ -144,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Clear all error states
   const clearErrors = () => {
     const inputs = loginForm.querySelectorAll('.form-control');
     inputs.forEach(input => input.classList.remove('is-invalid'));
@@ -155,11 +133,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- LOGIN FORM SUBMIT ---
   if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       clearErrors();
       
-      // Hide previous alert
       if (loginAlert) {
         loginAlert.style.display = 'none';
       }
@@ -175,7 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       };
 
-      // 1. Email (Required & Format)
       const email = emailInput.value.trim();
       if (!email) {
         setInvalid(emailInput, 'error-email');
@@ -187,96 +163,81 @@ document.addEventListener('DOMContentLoaded', () => {
         if (errorMsg) errorMsg.textContent = 'Please provide a valid email format.';
       }
 
-      // 2. Password (Required)
       const password = passwordInput.value;
       if (!password) {
         setInvalid(passwordInput, 'error-password');
       }
 
-      // --- HANDLE ERROR FLOW ---
       if (!isValid) {
         if (firstInvalidElement) {
           firstInvalidElement.focus();
         }
-
-        const alertIcon = `
-          <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="16" x2="12" y2="12"></line>
-            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-          </svg>
-        `;
-        showToast("Please correct the errors in the login form.", alertIcon);
+        showToast("Please correct the errors in the login form.");
         return;
       }
 
-      // --- HANDLE SUCCESS FLOW (FUTURE FIREBASE NOTIFICATION) ---
       const submitBtn = loginForm.querySelector('button[type="submit"]');
       const originalBtnText = submitBtn.innerHTML;
-      
-      // Show loading spinner state
+
       submitBtn.disabled = true;
       submitBtn.innerHTML = `
         <svg class="animate-spin" style="animation: spin 1s linear infinite; width: 20px; height: 20px; margin-right: 8px; display: inline-block; vertical-align: middle;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
           <circle cx="12" cy="12" r="10" style="opacity: 0.25;"></circle>
           <path d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4z" style="opacity: 0.75;"></path>
         </svg>
-        Authenticating Profile...
+        Authenticating with Firebase...
       `;
 
-      setTimeout(() => {
-        // Display Success Banner stating service will be activated after backend integration
+      try {
+        const result = await HGS_AUTH.loginUser({ usernameOrEmail: email, password }, 'applicant');
+
         if (loginAlert) {
           loginAlert.className = "form-alert success";
           loginAlert.innerHTML = `
-            <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
-              <div style="background-color: var(--accent); color: var(--primary); width: 36px; height: 36px; border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 10px rgba(212, 175, 55, 0.25);">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" y1="16" x2="12" y2="12"></line>
-                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                </svg>
-              </div>
+            <div style="display: flex; gap: 0.75rem; align-items: center; background-color: #D1FAE5; color: #065F46; padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid #6EE7B7;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
               <div>
-                <h4 style="color: var(--primary); font-size: 1.05rem; font-weight: 700; margin-bottom: 0.25rem;">Validation Successful</h4>
-                <p style="color: var(--text-dark); font-size: 0.9rem; line-height: 1.5; margin-bottom: 0; font-weight: 500;">
-                  Login service will be activated after backend integration.
-                </p>
-                <p style="color: var(--text-muted); font-size: 0.82rem; line-height: 1.4; margin-top: 0.4rem; margin-bottom: 0;">
-                  Your inputs are correct. This page is prepared to link with Firebase Authentication. Security modules will be activated once backend resources are deployed.
-                </p>
+                <h4 style="color: #065F46; font-size: 1.05rem; font-weight: 700; margin-bottom: 0.15rem;">Authentication Successful</h4>
+                <p style="font-size: 0.9rem; margin-bottom: 0;">Welcome back! Redirecting to your Applicant Dashboard...</p>
               </div>
             </div>
           `;
           loginAlert.style.display = "block";
-          loginAlert.style.padding = "1.5rem";
-          loginAlert.style.borderRadius = "var(--radius-md)";
-          loginAlert.style.marginBottom = "1.5rem";
+          loginAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        // Restore button state
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalBtnText;
-
-        // Reset form fields
-        loginForm.reset();
-
-        // Scroll to success banner smoothly
-        loginAlert.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
-
-        // Toast feedback
         const checkIcon = `
-          <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
         `;
-        showToast("Inputs verified successfully. Awaiting backend deployment phase.", checkIcon);
+        showToast(`Welcome back, ${result.user.displayName || result.user.surname || 'Applicant'}! Opening dashboard...`, checkIcon);
 
-      }, 1500);
+        setTimeout(() => {
+          window.location.href = 'applicant-dashboard.html';
+        }, 1000);
 
+      } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+
+        let errorMsg = err.message || "Invalid credentials. Please check your email and password.";
+        if (err.code === "auth/invalid-credential" || err.code === "auth/user-not-found" || err.code === "auth/wrong-password") {
+          errorMsg = "Invalid email or password. Please verify your details or create an account.";
+        }
+
+        if (loginAlert) {
+          loginAlert.className = "form-alert error";
+          loginAlert.innerHTML = `
+            <div style="display: flex; gap: 0.75rem; align-items: center; background-color: #FEE2E2; color: #991B1B; padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid #FCA5A5;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              <span style="font-weight: 600;">${errorMsg}</span>
+            </div>
+          `;
+          loginAlert.style.display = "block";
+          loginAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
     });
   }
 });
