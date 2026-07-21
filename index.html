@@ -1202,10 +1202,15 @@
   <!-- PAGE VIEW: CONTACT US PAGE                                -->
   <!-- ========================================================= -->
   <main id="contact-view" class="page-view">
-    <!-- Contact Page Header Banner -->
+    <!-- 1. Hero Section -->
     <section class="page-banner">
-      <div class="container page-banner-container">
-        <h1>Contact Our Staff</h1>
+      <div class="hero-bg-wrapper">
+        <img src="/src/assets/images/school_hero_background_1784645354887.jpg" alt="His Grace School Contact Background" class="hero-bg" style="opacity: 0.15;" referrerPolicy="no-referrer">
+      </div>
+      <div class="hero-overlay" style="background: linear-gradient(135deg, rgba(18, 62, 124, 0.95) 0%, rgba(9, 33, 68, 0.98) 100%);"></div>
+      <div class="container page-banner-container" style="position: relative; z-index: 5;">
+        <h1>Contact Us</h1>
+        <p class="hero-subtitle" style="color: rgba(255, 255, 255, 0.9); font-size: 1.25rem; font-weight: 400; margin-top: 0.5rem; margin-bottom: 1.5rem; max-width: 600px; line-height: 1.4;">We are always ready to assist you.</p>
         <ul class="breadcrumbs">
           <li><a href="#/home">Home</a></li>
           <li>Contact Us</li>
@@ -1213,125 +1218,202 @@
       </div>
     </section>
 
-    <!-- Main contacts layouts -->
+    <!-- 2. Welcome Message -->
     <section class="section">
+      <div class="container" style="max-width: 900px; text-align: center;">
+        <div class="subtitle">Get In Touch</div>
+        <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem; color: var(--primary);">We Welcome Your Inquiries</h2>
+        <p style="font-size: 1.15rem; line-height: 1.8; color: var(--text-dark); margin-bottom: 1.5rem;">
+          At His Grace School Agbugburu, we maintain an open-door communication policy. Whether you are a parent wishing to discuss your child's academic development, a prospective guardian seeking admission information, or a member of our vibrant community inquiring about school partnerships, we are always ready to assist you.
+        </p>
+        <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 0;">
+          Our administration team is dedicated to providing timely, transparent, and supportive responses to all inquiries. Please reach out to us using our permanent contact options below or fill out our official message portal.
+        </p>
+      </div>
+    </section>
+
+    <!-- Main contacts layouts with form and details -->
+    <section class="section section-bg" style="background-color: var(--secondary-bg);">
       <div class="container contact-grid">
-        <!-- Left Column: Permanent Contact Cards -->
-        <div class="contact-cards-container">
-          <div class="subtitle">Quick Touchpoints</div>
-          <h2 style="margin-bottom: 1.5rem;">Get in Touch With Us</h2>
-          <p>His Grace School Agbugburu remains highly open to parent feedback, counselor questions, and community interactions. Reach us via any channels below.</p>
+        <!-- 3. Left Column: Permanent Contact Cards & 6. Working Hours -->
+        <div class="contact-cards-container" style="display: flex; flex-direction: column; gap: 2rem;">
+          <div>
+            <div class="subtitle">Quick Touchpoints</div>
+            <h2 style="font-size: 2rem; margin-bottom: 1rem; color: var(--primary);">School Directory</h2>
+            <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 0;">Direct and permanent lines to our physical site and academic administrative office.</p>
+          </div>
           
           <!-- Card 1: Address -->
           <div class="contact-card">
-            <div class="contact-icon-wrapper">
+            <div class="contact-icon-wrapper" style="background-color: rgba(18, 62, 124, 0.08); color: var(--primary); border-radius: var(--radius-md);">
               <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
               </svg>
             </div>
             <div class="contact-details">
-              <h3>School Address</h3>
-              <p>Agbugburu Village,</p>
-              <p>Odeda Local Government,</p>
-              <p>Abeokuta, Ogun State, Nigeria.</p>
+              <h3 style="color: var(--primary); font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem;">Physical Address</h3>
+              <p style="color: var(--text-dark); font-weight: 500; line-height: 1.5; margin-bottom: 0.15rem;">Agbugburu Village,</p>
+              <p style="color: var(--text-dark); font-weight: 500; line-height: 1.5; margin-bottom: 0.15rem;">Odeda Local Government,</p>
+              <p style="color: var(--text-dark); font-weight: 500; line-height: 1.5; margin-bottom: 0.15rem;">Abeokuta, Ogun State,</p>
+              <p style="color: var(--text-dark); font-weight: 500; line-height: 1.5; margin-bottom: 0;">Nigeria</p>
             </div>
           </div>
 
           <!-- Card 2: Email -->
           <div class="contact-card">
-            <div class="contact-icon-wrapper">
+            <div class="contact-icon-wrapper" style="background-color: rgba(18, 62, 124, 0.08); color: var(--primary); border-radius: var(--radius-md);">
               <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                 <polyline points="22,6 12,13 2,6"></polyline>
               </svg>
             </div>
             <div class="contact-details">
-              <h3>Academic Email</h3>
-              <p>hisgraceschoolagbugburu@gmail.com</p>
-              <p style="font-size:0.75rem; color:var(--text-muted);">Checked daily by administrators</p>
+              <h3 style="color: var(--primary); font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem;">Email Address</h3>
+              <p style="font-size: 1.05rem; color: var(--accent); font-weight: 600; margin-bottom: 0.25rem;">hisgraceschoolagbugburu@gmail.com</p>
+              <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">Monitored continuously for academic applications and general queries.</p>
             </div>
           </div>
 
           <!-- Card 3: Phone Numbers -->
           <div class="contact-card">
-            <div class="contact-icon-wrapper">
+            <div class="contact-icon-wrapper" style="background-color: rgba(18, 62, 124, 0.08); color: var(--primary); border-radius: var(--radius-md);">
               <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
               </svg>
             </div>
             <div class="contact-details">
-              <h3>Phone Helplines</h3>
-              <p>09034014865</p>
-              <p>08068045866</p>
-              <p style="font-size:0.75rem; color:var(--text-muted);">Available Monday – Friday, 8am – 4pm</p>
+              <h3 style="color: var(--primary); font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem;">Phone Numbers</h3>
+              <p style="font-size: 1.05rem; color: var(--text-dark); font-weight: 600; margin-bottom: 0.25rem;">09034014865</p>
+              <p style="font-size: 1.05rem; color: var(--text-dark); font-weight: 600; margin-bottom: 0.25rem;">08068045866</p>
+              <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">Call helplines available during standard administrative working hours.</p>
+            </div>
+          </div>
+
+          <!-- 6. School Working Hours Card -->
+          <div class="contact-card" style="background-color: var(--primary); color: var(--white); border: 2px solid var(--accent); overflow: hidden; position: relative;">
+            <div style="position: absolute; right: -15px; bottom: -15px; width: 100px; height: 100px; background-color: rgba(212, 175, 55, 0.08); border-radius: var(--radius-full); pointer-events: none;"></div>
+            <div class="contact-icon-wrapper" style="background-color: rgba(255, 255, 255, 0.1); color: var(--accent); border-radius: var(--radius-md);">
+              <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <div class="contact-details">
+              <h3 style="color: var(--white); font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; letter-spacing: -0.01em;">School Working Hours</h3>
+              
+              <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 0.4rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                  <span style="font-size: 0.9rem; font-weight: 600; color: rgba(255, 255, 255, 0.85);">Monday – Friday</span>
+                  <span style="font-size: 0.9rem; font-weight: 700; color: var(--accent);">8:00 AM – 4:00 PM</span>
+                </div>
+                
+                <div style="border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 0.4rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                  <span style="font-size: 0.9rem; font-weight: 600; color: rgba(255, 255, 255, 0.85);">Saturday</span>
+                  <span style="font-size: 0.85rem; font-weight: 700; color: var(--white); background-color: rgba(255, 255, 255, 0.15); padding: 0.1rem 0.5rem; border-radius: var(--radius-sm);">Admin Services Only</span>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                  <span style="font-size: 0.9rem; font-weight: 600; color: rgba(255, 255, 255, 0.85);">Sunday</span>
+                  <span style="font-size: 0.9rem; font-weight: 700; color: #EF4444;">Closed</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Right Column: Interactive Contact Form -->
-        <div class="contact-form-container">
-          <div class="subtitle">Direct Query Mail</div>
-          <h2>Send us a Message</h2>
-          <p class="lead" style="font-size:0.95rem; color:var(--text-muted);">Fill in the contact form below, and our administrative desk will respond to your registered email address promptly.</p>
+        <!-- 4. Right Column: Interactive Contact Form -->
+        <div class="contact-form-container" style="background-color: var(--white); border-radius: var(--radius-lg); padding: 3rem; box-shadow: var(--shadow-lg); border: 1px solid var(--border);">
+          <div class="subtitle">Direct Portal</div>
+          <h2 style="font-size: 2rem; color: var(--primary); margin-bottom: 0.75rem;">Send us a Message</h2>
+          <p class="lead" style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 2rem; line-height: 1.6;">Fill in the official contact form below, and our administrative desk will respond to your registered email address promptly. Designed to connect with EmailJS or Firebase later.</p>
           
           <!-- Alert Success banner -->
           <div id="contact-alert" class="form-alert"></div>
 
           <form id="contact-form" autocomplete="off">
+            <!-- Name (Span Full width in internal grid) -->
+            <div class="form-group" style="margin-bottom: 1.25rem;">
+              <label for="form-name" class="form-label" style="font-weight: 600; font-size: 0.9rem; color: var(--primary);">Full Name *</label>
+              <input type="text" id="form-name" class="form-control" style="font-size: 0.95rem; padding: 0.9rem 1.1rem; border-radius: var(--radius-md);" placeholder="e.g. Samuel Adebayo" required>
+            </div>
+
+            <!-- Email & Phone Number (Responsive grid side-by-side) -->
             <div class="form-grid">
-              <!-- Name -->
               <div class="form-group">
-                <label for="form-name" class="form-label">Your Name *</label>
-                <input type="text" id="form-name" class="form-control" placeholder="e.g. Samuel Adebayo" required>
+                <label for="form-email" class="form-label" style="font-weight: 600; font-size: 0.9rem; color: var(--primary);">Email Address *</label>
+                <input type="email" id="form-email" class="form-control" style="font-size: 0.95rem; padding: 0.9rem 1.1rem; border-radius: var(--radius-md);" placeholder="e.g. samuel@gmail.com" required>
               </div>
-              <!-- Email -->
               <div class="form-group">
-                <label for="form-email" class="form-label">Email Address *</label>
-                <input type="email" id="form-email" class="form-control" placeholder="e.g. samuel@gmail.com" required>
+                <label for="form-phone" class="form-label" style="font-weight: 600; font-size: 0.9rem; color: var(--primary);">Phone Number *</label>
+                <input type="tel" id="form-phone" class="form-control" style="font-size: 0.95rem; padding: 0.9rem 1.1rem; border-radius: var(--radius-md);" placeholder="e.g. 09034014865" required>
               </div>
             </div>
             
-            <div class="form-grid" style="grid-template-columns: 1fr;">
-              <!-- Subject -->
-              <div class="form-group full-width">
-                <label for="form-subject" class="form-label">Inquiry Subject *</label>
-                <input type="text" id="form-subject" class="form-control" placeholder="e.g. Nursery Admission school fees inquiries" required>
-              </div>
-              <!-- Message -->
-              <div class="form-group full-width">
-                <label for="form-message" class="form-label">Message Details *</label>
-                <textarea id="form-message" class="form-control" placeholder="Write your full questions or detailed message here..." required></textarea>
-              </div>
+            <!-- Subject (Full width) -->
+            <div class="form-group" style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
+              <label for="form-subject" class="form-label" style="font-weight: 600; font-size: 0.9rem; color: var(--primary);">Subject *</label>
+              <input type="text" id="form-subject" class="form-control" style="font-size: 0.95rem; padding: 0.9rem 1.1rem; border-radius: var(--radius-md);" placeholder="e.g. Nursery Academic Curriculum Fees" required>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Send Message Now</button>
+            <!-- Message (Full width) -->
+            <div class="form-group" style="margin-bottom: 1.75rem;">
+              <label for="form-message" class="form-label" style="font-weight: 600; font-size: 0.9rem; color: var(--primary);">Message *</label>
+              <textarea id="form-message" class="form-control" style="font-size: 0.95rem; padding: 0.9rem 1.1rem; border-radius: var(--radius-md); min-height: 140px;" placeholder="Write your full questions or detailed message here..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; padding: 1.1rem; font-size: 1.05rem; font-weight: 700; border-radius: var(--radius-md); letter-spacing: 0.5px;">Send Message</button>
           </form>
         </div>
       </div>
     </section>
 
-    <!-- Map Section -->
-    <section class="section contact-map-section">
+    <!-- 5. Google Maps Placeholder Section (Using live embed with custom fallback text) -->
+    <section class="section contact-map-section" style="padding-top: 5rem;">
       <div class="container">
-        <div class="section-header text-center">
+        <div class="section-header text-center" style="margin-bottom: 3rem;">
           <div class="subtitle">Our Geographical Spot</div>
-          <h2>Find Us in Agbugburu Village</h2>
-          <p>Use the Google Map interface placeholder below to visualize our exact positioning in Odeda Local Government, Abeokuta, Ogun State.</p>
+          <h2 style="font-size: 2.25rem; color: var(--primary);">Find Us in Agbugburu Village</h2>
+          <p style="max-width: 700px; margin: 0 auto; color: var(--text-muted);">We are positioned in Odeda Local Government area of Abeokuta, Ogun State. View our active geographic region below.</p>
         </div>
 
-        <div class="contact-preview-map" style="aspect-ratio: 16/7; max-width: 100%;">
-          <div class="map-placeholder">
-            <div class="map-accent-bg"></div>
-            <svg class="contact-card-icon" style="width: 48px; height: 48px; color: var(--primary); margin-bottom: 1rem; position: relative; z-index: 2;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
-              <line x1="8" y1="2" x2="8" y2="18"></line>
-              <line x1="16" y1="6" x2="16" y2="22"></line>
-            </svg>
-            <h4 style="position: relative; z-index: 2; margin-bottom: 0.5rem; font-size: 1.15rem;">Google Maps Integration Portal</h4>
-            <p style="position: relative; z-index: 2; max-width: 500px; font-size: 0.85rem; margin-bottom: 1rem;">This map represents Agbugburu Village, Odeda, Ogun State, Nigeria. The live coordinates and API markers can be integrated dynamically via Cloud Services in subsequent development phases.</p>
+        <div style="background-color: var(--white); padding: 1rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); border: 1px solid var(--border); overflow: hidden;">
+          <div class="contact-preview-map" style="position: relative; width: 100%; aspect-ratio: 16/7; overflow: hidden; border-radius: var(--radius-md);">
+            <!-- Real interactive Google Maps Iframe of Odeda region (without API key) -->
+            <iframe 
+              src="https://maps.google.com/maps?q=Odeda,%20Ogun%20State,%20Nigeria&t=&z=13&ie=UTF8&iwloc=&output=embed" 
+              style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" 
+              allowfullscreen="" 
+              loading="lazy" 
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+            
+            <!-- Float label tag representing school location overlay -->
+            <div style="position: absolute; top: 20px; left: 20px; background-color: var(--primary); color: var(--white); padding: 1rem 1.5rem; border-radius: var(--radius-md); box-shadow: var(--shadow-md); max-width: 300px; border-left: 4px solid var(--accent); z-index: 10;">
+              <h4 style="color: var(--white); font-size: 1rem; margin-bottom: 0.25rem; font-weight: 600;">His Grace School Site</h4>
+              <p style="color: rgba(255, 255, 255, 0.8); font-size: 0.8rem; line-height: 1.4; margin-bottom: 0;">Located in Agbugburu Village, Odeda LG, Abeokuta, Ogun State, Nigeria.</p>
+            </div>
+          </div>
+          
+          <div style="margin-top: 1rem; text-align: center; padding: 0.5rem 1rem;">
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0;">
+              <strong style="color: var(--primary);">Administrator Note:</strong> Live API-driven markers, dynamic routes, and directions can later be fully embedded through Google Maps Platform when keys are set up.
+            </p>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- 7. Quick Contact Section (Call To Action) -->
+    <section class="section" style="background-color: var(--primary); padding: 5.5rem 0; position: relative; overflow: hidden; border-top: 4px solid var(--accent);">
+      <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.05; background-image: radial-gradient(#D4AF37 2px, transparent 2px); background-size: 20px 20px;"></div>
+      <div class="container text-center" style="position: relative; z-index: 2; max-width: 800px;">
+        <span class="subtitle" style="color: var(--accent); letter-spacing: 4px; font-weight: 700; text-transform: uppercase;">Molding Greatness</span>
+        <h2 style="color: var(--white); font-size: 2.75rem; font-weight: 700; margin: 1.5rem 0; line-height: 1.2;">Need Admission Assistance?</h2>
+        <p style="color: rgba(255,255,255,0.85); max-width: 650px; margin: 0 auto 3rem auto; font-size: 1.15rem; line-height: 1.7;">
+          Our helpful administrative registry desk is always available to walk you through the admission timeline, documents, and standard requirements. Secure your seat today.
+        </p>
+        <a href="applicant-register.html" class="btn btn-accent btn-lg pulse-btn" style="padding: 1.25rem 3rem; font-size: 1.15rem; display: inline-block; text-decoration: none; border-radius: var(--radius-full);">Apply for Admission</a>
       </div>
     </section>
   </main>

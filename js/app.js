@@ -389,11 +389,12 @@ document.addEventListener('DOMContentLoaded', () => {
       // Retrieve form data
       const name = document.getElementById('form-name').value.trim();
       const email = document.getElementById('form-email').value.trim();
+      const phone = document.getElementById('form-phone').value.trim();
       const subject = document.getElementById('form-subject').value.trim();
       const message = document.getElementById('form-message').value.trim();
 
       // Simple validation
-      if (!name || !email || !subject || !message) {
+      if (!name || !email || !phone || !subject || !message) {
         showToast("Please fill in all form fields.", `
           <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2">
             <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
