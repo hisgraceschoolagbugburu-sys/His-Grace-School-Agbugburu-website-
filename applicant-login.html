@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Applicant Login | His Grace School Agbugburu</title>
+  
+  <!-- SEO & Description -->
+  <meta name="description" content="Sign in to your admission account for His Grace School Agbugburu to continue your application.">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* Login card specific styles */
+    .login-container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 3.5rem 3rem;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+    }
+
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+    }
+
+    .remember-me-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      color: var(--text-dark);
+      font-weight: 500;
+      user-select: none;
+    }
+
+    .remember-me-checkbox {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+
+    .forgot-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 2px solid transparent;
+      transition: var(--transition-fast);
+    }
+
+    .forgot-link:hover {
+      border-bottom-color: var(--accent);
+    }
+
+    .error-text {
+      color: #EF4444;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-top: 0.25rem;
+      display: none;
+      align-items: center;
+      gap: 0.25rem;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .form-control.is-invalid {
+      border-color: #EF4444;
+      background-color: #FEF2F2;
+    }
+
+    .form-control.is-invalid:focus {
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-toggle-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition-fast);
+    }
+
+    .password-toggle-btn:hover {
+      color: var(--primary);
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      .login-container {
+        padding: 2.5rem 1.5rem;
+      }
+      .form-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================= -->
+  <!-- HEADER & NAVIGATION                                       -->
+  <!-- ========================================================= -->
+  <header id="header" class="header">
+    <div class="container header-container">
+      <!-- Logo Block -->
+      <a href="index.html#/home" class="logo-link" id="logo-nav-link">
+        <div class="logo-img-wrapper" title="Administrator editable logo">
+          <img src="/src/assets/images/school_crest_logo_1784645340046.jpg" alt="His Grace School Agbugburu Logo" class="logo-img" referrerPolicy="no-referrer">
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">His Grace School</span>
+          <span class="logo-subtitle">Agbugburu</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Menu -->
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="index.html#/home" class="nav-link">Home</a></li>
+        <li><a href="index.html#/about" class="nav-link">About Us</a></li>
+        <li><a href="index.html#/admission" class="nav-link">Admission</a></li>
+        <li><a href="index.html#/gallery" class="nav-link">Gallery</a></li>
+        <li><a href="index.html#/contact" class="nav-link">Contact Us</a></li>
+        
+        <!-- Portal Dropdown -->
+        <li class="dropdown" id="portal-dropdown">
+          <span class="nav-link dropdown-toggle">
+            Portal
+            <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
+          <ul class="dropdown-menu">
+            <li class="dropdown-item"><a href="#" class="dropdown-link portal-link">Student Portal</a></li>
+            <li class="dropdown-item"><a href="#" class="dropdown-link portal-link">Teacher Portal</a></li>
+            <li class="dropdown-item"><a href="#" class="dropdown-link portal-link">Administrator Portal</a></li>
+          </ul>
+        </li>
+      </ul>
+
+      <!-- Hamburger Menu Toggle (Mobile) -->
+      <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================================= -->
+  <!-- HERO SECTION                                              -->
+  <!-- ========================================================= -->
+  <main class="page-view active" style="margin-top: var(--header-height);">
+    <section class="page-banner">
+      <div class="hero-bg-wrapper">
+        <img src="/src/assets/images/school_library_1784645387014.jpg" alt="His Grace School Admission Background" class="hero-bg" style="opacity: 0.15;" referrerPolicy="no-referrer">
+      </div>
+      <div class="hero-overlay" style="background: linear-gradient(135deg, rgba(18, 62, 124, 0.95) 0%, rgba(9, 33, 68, 0.98) 100%);"></div>
+      <div class="container page-banner-container" style="position: relative; z-index: 5;">
+        <h1>Applicant Login</h1>
+        <p class="hero-subtitle" style="color: rgba(255, 255, 255, 0.9); font-size: 1.25rem; font-weight: 400; margin-top: 0.5rem; margin-bottom: 1.5rem; max-width: 600px; line-height: 1.4;">Sign in to continue your admission application.</p>
+        <ul class="breadcrumbs">
+          <li><a href="index.html#/home">Home</a></li>
+          <li><a href="index.html#/admission">Admission</a></li>
+          <li>Login</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- WELCOME MESSAGE & LOGIN FORM                              -->
+    <!-- ========================================================= -->
+    <section class="section section-bg" style="background-color: var(--secondary-bg); padding: 5rem 0;">
+      <div class="container">
+        
+        <!-- Welcome Brief -->
+        <div class="text-center" style="max-width: 800px; margin: 0 auto 3rem auto;">
+          <span class="subtitle" style="letter-spacing: 2px;">Applicant Access</span>
+          <h2 style="font-size: 2.25rem; color: var(--primary); margin-bottom: 1.25rem;">Admission Account Sign In</h2>
+          <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 0;">
+            Please sign in with your registered email and password to access your secure portal. Once logged in, you can fill out the complete admission application form, check assessments, upload required documents, and track your registration progress.
+          </p>
+        </div>
+
+        <!-- Login Card Container -->
+        <div class="login-container">
+          
+          <!-- Alert Success/Error Banner -->
+          <div id="login-alert" class="form-alert" style="display: none;"></div>
+
+          <form id="login-form" novalidate autocomplete="off">
+            
+            <!-- Email Address -->
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+              <label for="login-email" class="form-label" style="font-weight: 600; color: var(--primary);">Email Address *</label>
+              <input type="email" id="login-email" class="form-control" style="font-size: 0.95rem; padding: 0.9rem 1.1rem; border-radius: var(--radius-md);" placeholder="Enter your registered email" required>
+              <div class="error-text" id="error-email">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <span>Please provide a valid email format.</span>
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="login-password" class="form-label" style="font-weight: 600; color: var(--primary);">Password *</label>
+              <div class="password-wrapper">
+                <input type="password" id="login-password" class="form-control" style="font-size: 0.95rem; padding: 0.9rem 1.1rem; padding-right: 44px; border-radius: var(--radius-md);" placeholder="Enter your password" required>
+                <button type="button" class="password-toggle-btn" id="toggle-password" aria-label="Toggle password visibility">
+                  <svg class="toggle-icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </div>
+              <div class="error-text" id="error-password">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <span>Password is required.</span>
+              </div>
+            </div>
+
+            <!-- Form Options (Remember Me & Forgot Password) -->
+            <div class="form-options">
+              <label class="remember-me-label">
+                <input type="checkbox" id="login-remember" class="remember-me-checkbox">
+                Remember Me
+              </label>
+              <a href="forgot-password.html" class="forgot-link">Forgot Password?</a>
+            </div>
+
+            <!-- Submit Control -->
+            <div>
+              <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; padding: 1.15rem; font-size: 1.1rem; font-weight: 700; border-radius: var(--radius-md); letter-spacing: 0.5px; box-shadow: var(--shadow-accent);">Sign In</button>
+            </div>
+
+            <!-- Create Account Link -->
+            <div class="text-center" style="margin-top: 2.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+              <p style="color: var(--text-muted); font-size: 0.95rem; font-weight: 500;">
+                Don't have an account? 
+                <a href="applicant-register.html" style="color: var(--primary); font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--accent); transition: var(--transition-fast);">Create Account</a>
+              </p>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================= -->
+  <!-- TOAST CONTAINER                                           -->
+  <!-- ========================================================= -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- ========================================================= -->
+  <!-- PROFESSIONAL FOOTER SECTION                               -->
+  <!-- ========================================================= -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <!-- Column 1: School Identity -->
+      <div class="footer-logo-block">
+        <div class="footer-logo-wrapper">
+          <div class="logo-img-wrapper" style="width: 44px; height: 44px; border: 1px solid rgba(255, 255, 255, 0.15); background-color: white;">
+            <img src="/src/assets/images/school_crest_logo_1784645340046.jpg" alt="His Grace School Agbugburu Crest" class="logo-img" referrerPolicy="no-referrer">
+          </div>
+          <span class="footer-logo-title">His Grace School</span>
+        </div>
+        <p class="footer-school-desc">We are highly committed to providing a solid foundation, academic excellence, and robust moral training. Dedicated to molding your child for a bright, great, and leadership-driven tomorrow.</p>
+        <p class="footer-school-desc" style="color: var(--accent); font-weight: 600; letter-spacing: 2px;">MOLDING LIVES FOR GREATNESS</p>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div>
+        <h3 class="footer-heading">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="index.html#/home" class="footer-link">Home</a></li>
+          <li><a href="index.html#/about" class="footer-link">About Us</a></li>
+          <li><a href="index.html#/admission" class="footer-link">Admission Guide</a></li>
+          <li><a href="index.html#/gallery" class="footer-link">School Gallery</a></li>
+          <li><a href="index.html#/contact" class="footer-link">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Contact & Address -->
+      <div>
+        <h3 class="footer-heading">Our Contact</h3>
+        <ul class="footer-contact-list">
+          <li class="footer-contact-item">
+            <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span>Agbugburu Village, Odeda Local Government, Abeokuta, Ogun State, Nigeria.</span>
+          </li>
+          <li class="footer-contact-item">
+            <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <span>hisgraceschoolagbugburu@gmail.com</span>
+          </li>
+          <li class="footer-contact-item">
+            <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            <span>09034014865, 08068045866</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Footer Copyright -->
+    <div class="container footer-bottom">
+      <p>&copy; 2026 His Grace School Agbugburu. All rights reserved.</p>
+      <p style="font-size: 0.75rem;">Premium School Management System V3</p>
+    </div>
+  </footer>
+
+  <!-- Page Logic -->
+  <script src="js/login.js" defer></script>
+</body>
+</html>
