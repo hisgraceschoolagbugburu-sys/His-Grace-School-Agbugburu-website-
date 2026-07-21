@@ -24,6 +24,8 @@ export default defineConfig(() => {
           adminReview: path.resolve(__dirname, 'admin-admission-review.html'),
           admissionDecision: path.resolve(__dirname, 'admission-decision.html'),
           qrVerification: path.resolve(__dirname, 'qr-verification.html'),
+          studentLogin: path.resolve(__dirname, 'student-login.html'),
+          studentPortal: path.resolve(__dirname, 'student-portal.html'),
         },
       },
     },
