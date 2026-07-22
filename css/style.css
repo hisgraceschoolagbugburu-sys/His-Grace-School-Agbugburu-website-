@@ -2025,3 +2025,93 @@ textarea.form-control {
 .mobile-toggle.active span:nth-child(3) {
   transform: translateY(-7px) rotate(-45deg);
 }
+
+/* ========================================================= */
+/* CLOUDINARY UPLOADER & PROGRESS BAR STYLES                 */
+/* ========================================================= */
+.upload-progress-container {
+  margin-top: 0.85rem;
+  display: none;
+}
+
+.upload-progress-container.active {
+  display: block;
+}
+
+.upload-progress-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: var(--border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.upload-progress-bar-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+  transition: width 0.15s ease-in-out;
+  border-radius: var(--radius-full);
+}
+
+.upload-status-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-dark);
+}
+
+.upload-status-text.success {
+  color: #059669;
+}
+
+.upload-status-text.error {
+  color: #DC2626;
+}
+
+.gallery-admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.gallery-admin-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.gallery-admin-thumb {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  background: var(--secondary-bg);
+}
+
+.gallery-admin-content {
+  padding: 0.85rem;
+}
+
+.doc-admin-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: var(--shadow-sm);
+}
+

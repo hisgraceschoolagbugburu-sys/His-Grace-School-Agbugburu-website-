@@ -570,14 +570,21 @@
             <button class="admin-nav-btn" data-tab="gallery">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
               Gallery
-              <span class="cs-badge-mini">Soon</span>
+              <span class="cs-badge-mini" style="background: rgba(5, 150, 105, 0.2); color: #059669; border-color: rgba(5, 150, 105, 0.4);">Active</span>
             </button>
           </li>
           <li>
             <button class="admin-nav-btn" data-tab="news">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"></path></svg>
               News
-              <span class="cs-badge-mini">Soon</span>
+              <span class="cs-badge-mini" style="background: rgba(5, 150, 105, 0.2); color: #059669; border-color: rgba(5, 150, 105, 0.4);">Active</span>
+            </button>
+          </li>
+          <li>
+            <button class="admin-nav-btn" data-tab="admission-letters">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line></svg>
+              Downloads & PDFs
+              <span class="cs-badge-mini" style="background: rgba(5, 150, 105, 0.2); color: #059669; border-color: rgba(5, 150, 105, 0.4);">Active</span>
             </button>
           </li>
           <li>
@@ -1015,12 +1022,22 @@
                 </p>
 
                 <div class="upload-dropzone-box" id="dz-school-logo">
-                  <img src="/src/assets/images/school_crest_logo_1784645340046.jpg" alt="Current School Crest" class="dropzone-preview-thumb" style="width: 90px; height: 90px; object-fit: contain;" referrerPolicy="no-referrer">
+                  <img src="/src/assets/images/school_crest_logo_1784645340046.jpg" alt="Current School Crest" id="preview-logo-img" class="dropzone-preview-thumb" style="width: 90px; height: 90px; object-fit: contain;" referrerPolicy="no-referrer">
                   <p style="font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;">
                     Click or Drag to Upload New Crest Logo
                   </p>
-                  <span style="font-size: 0.75rem; color: var(--text-muted);">Firebase Storage Placeholder Mode</span>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">Cloudinary Direct Upload (kzpuxfve)</span>
                   <input type="file" id="input-logo-file" accept="image/*" style="display: none;">
+                </div>
+                <!-- Progress Bar -->
+                <div id="logo-upload-progress" class="upload-progress-container">
+                  <div class="upload-progress-bar-bg">
+                    <div id="logo-progress-bar-fill" class="upload-progress-bar-fill"></div>
+                  </div>
+                  <div id="logo-upload-status" class="upload-status-text">
+                    <span>Uploading logo to Cloudinary...</span>
+                    <span id="logo-progress-percent">0%</span>
+                  </div>
                 </div>
               </div>
 
@@ -1035,12 +1052,22 @@
                 </p>
 
                 <div class="upload-dropzone-box" id="dz-hero-bg">
-                  <img src="/src/assets/images/school_hero_background_1784645354887.jpg" alt="Current Hero Background" class="dropzone-preview-thumb" referrerPolicy="no-referrer">
+                  <img src="/src/assets/images/school_hero_background_1784645354887.jpg" alt="Current Hero Background" id="preview-hero-img" class="dropzone-preview-thumb" referrerPolicy="no-referrer">
                   <p style="font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;">
                     Click or Drag to Upload New Hero Background
                   </p>
-                  <span style="font-size: 0.75rem; color: var(--text-muted);">Firebase Storage Placeholder Mode</span>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">Cloudinary Direct Upload (kzpuxfve)</span>
                   <input type="file" id="input-hero-file" accept="image/*" style="display: none;">
+                </div>
+                <!-- Progress Bar -->
+                <div id="hero-upload-progress" class="upload-progress-container">
+                  <div class="upload-progress-bar-bg">
+                    <div id="hero-progress-bar-fill" class="upload-progress-bar-fill"></div>
+                  </div>
+                  <div id="hero-upload-status" class="upload-status-text">
+                    <span>Uploading background to Cloudinary...</span>
+                    <span id="hero-progress-percent">0%</span>
+                  </div>
                 </div>
               </div>
 
@@ -1151,6 +1178,227 @@
 
         </div>
 
+      </div>
+
+      <!-- VIEW 4: GALLERY MANAGEMENT PANE -->
+      <div class="tab-pane" id="pane-admin-gallery" style="display: none;">
+        <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--primary); margin-bottom: 0.2rem;">
+              🖼 Gallery Management
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Upload campus event photos, edit image captions, and manage the official school photo gallery.</p>
+          </div>
+          <button type="button" class="btn btn-outline btn-return-dash" style="padding: 0.5rem 1rem;">
+            ← Back to Dashboard
+          </button>
+        </div>
+
+        <div class="management-panel-card">
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem;">Upload New Gallery Photo</h3>
+          <form id="gallery-upload-form" novalidate>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
+              <div>
+                <label for="gallery-caption-input" class="form-label" style="font-weight: 600;">Photo Caption / Title</label>
+                <input type="text" id="gallery-caption-input" class="form-input" placeholder="e.g. Annual Sports Day 2026 Parade" required>
+              </div>
+              <div>
+                <label for="gallery-category-select" class="form-label" style="font-weight: 600;">Category</label>
+                <select id="gallery-category-select" class="form-select">
+                  <option value="campus">Campus & Facilities</option>
+                  <option value="academics">Academics & Science</option>
+                  <option value="sports">Sports & Inter-house</option>
+                  <option value="events">Events & Celebrations</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="upload-dropzone-box" id="dz-gallery-photo">
+              <p style="font-size: 0.9rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;">
+                Click or Drag to Upload Photo (JPG, PNG, WEBP — Max 10 MB)
+              </p>
+              <span id="gallery-file-label" style="font-size: 0.8rem; color: var(--text-muted);">No file selected</span>
+              <input type="file" id="input-gallery-file" accept="image/*" style="display: none;">
+            </div>
+
+            <!-- Progress Bar -->
+            <div id="gallery-upload-progress" class="upload-progress-container">
+              <div class="upload-progress-bar-bg">
+                <div id="gallery-progress-bar-fill" class="upload-progress-bar-fill"></div>
+              </div>
+              <div id="gallery-upload-status" class="upload-status-text">
+                <span>Uploading to Cloudinary...</span>
+                <span id="gallery-progress-percent">0%</span>
+              </div>
+            </div>
+
+            <div style="margin-top: 1.25rem; display: flex; justify-content: flex-end;">
+              <button type="submit" class="btn btn-primary" id="btn-upload-gallery" style="font-weight: 700;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                Upload Photo to Gallery
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="management-panel-card">
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">Current Gallery Photos</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Stored secure Cloudinary image links and Firestore metadata:</p>
+          <div id="admin-gallery-grid" class="gallery-admin-grid">
+            <!-- Dynamically populated from Firestore -->
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 5: NEWS MANAGEMENT PANE -->
+      <div class="tab-pane" id="pane-admin-news" style="display: none;">
+        <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--primary); margin-bottom: 0.2rem;">
+              📰 News & Notice Board Management
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Publish academic circulars, school notices, term updates, and upload featured images.</p>
+          </div>
+          <button type="button" class="btn btn-outline btn-return-dash" style="padding: 0.5rem 1rem;">
+            ← Back to Dashboard
+          </button>
+        </div>
+
+        <div class="management-panel-card">
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem;">Publish New News / Notice</h3>
+          <form id="news-upload-form" novalidate>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
+              <div>
+                <label for="news-title-input" class="form-label" style="font-weight: 600;">Post Title</label>
+                <input type="text" id="news-title-input" class="form-input" placeholder="e.g. 2026/2027 Academic Term Resumption Date" required>
+              </div>
+              <div>
+                <label for="news-category-select" class="form-label" style="font-weight: 600;">Category / Badge</label>
+                <select id="news-category-select" class="form-select">
+                  <option value="Academic Notice">Academic Notice</option>
+                  <option value="Admission Circular">Admission Circular</option>
+                  <option value="School Event">School Event</option>
+                  <option value="General Circular">General Circular</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+              <label for="news-body-input" class="form-label" style="font-weight: 600;">News Summary / Announcement Content</label>
+              <textarea id="news-body-input" class="form-textarea" rows="4" placeholder="Enter detailed announcement message..." required></textarea>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+              <label class="form-label" style="font-weight: 600;">Featured News Image (Cloudinary Upload)</label>
+              <div class="upload-dropzone-box" id="dz-news-image">
+                <p style="font-size: 0.9rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;">
+                  Click or Drag to Upload Featured Image (JPG, PNG, WEBP — Max 10 MB)
+                </p>
+                <span id="news-file-label" style="font-size: 0.8rem; color: var(--text-muted);">No image selected</span>
+                <input type="file" id="input-news-file" accept="image/*" style="display: none;">
+              </div>
+
+              <!-- Progress Bar -->
+              <div id="news-upload-progress" class="upload-progress-container">
+                <div class="upload-progress-bar-bg">
+                  <div id="news-progress-bar-fill" class="upload-progress-bar-fill"></div>
+                </div>
+                <div id="news-upload-status" class="upload-status-text">
+                  <span>Uploading image to Cloudinary...</span>
+                  <span id="news-progress-percent">0%</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+              <button type="submit" class="btn btn-primary" id="btn-publish-news" style="font-weight: 700;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"></path></svg>
+                Publish News Post
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="management-panel-card">
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">Published News Posts</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Active news items stored in Firestore with Cloudinary image URLs:</p>
+          <div id="admin-news-container" style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Dynamically populated from Firestore -->
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 6: DOWNLOADS & OFFICIAL DOCUMENTS PANE -->
+      <div class="tab-pane" id="pane-admin-downloads" style="display: none;">
+        <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--primary); margin-bottom: 0.2rem;">
+              📄 Official Downloads & PDF Documents
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Upload official school documents, admission letter templates, student handbooks, and prospectuses.</p>
+          </div>
+          <button type="button" class="btn btn-outline btn-return-dash" style="padding: 0.5rem 1rem;">
+            ← Back to Dashboard
+          </button>
+        </div>
+
+        <div class="management-panel-card">
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem;">Upload Official Document (PDF)</h3>
+          <form id="doc-upload-form" novalidate>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
+              <div>
+                <label for="doc-title-input" class="form-label" style="font-weight: 600;">Document Name / Title</label>
+                <input type="text" id="doc-title-input" class="form-input" placeholder="e.g. Official Admission Letter Template 2026" required>
+              </div>
+              <div>
+                <label for="doc-type-select" class="form-label" style="font-weight: 600;">Document Category</label>
+                <select id="doc-type-select" class="form-select">
+                  <option value="Admission Letter">Admission Letter</option>
+                  <option value="Student Handbook">Student Handbook</option>
+                  <option value="School Prospectus">School Prospectus</option>
+                  <option value="Fee Structure">Fee Structure & Policy</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+              <label class="form-label" style="font-weight: 600;">PDF Document File (Cloudinary Raw Upload)</label>
+              <div class="upload-dropzone-box" id="dz-doc-file">
+                <p style="font-size: 0.9rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;">
+                  Click or Drag to Upload PDF File (Max 10 MB)
+                </p>
+                <span id="doc-file-label" style="font-size: 0.8rem; color: var(--text-muted);">No PDF selected</span>
+                <input type="file" id="input-doc-file" accept=".pdf,application/pdf" style="display: none;">
+              </div>
+
+              <!-- Progress Bar -->
+              <div id="doc-upload-progress" class="upload-progress-container">
+                <div class="upload-progress-bar-bg">
+                  <div id="doc-progress-bar-fill" class="upload-progress-bar-fill"></div>
+                </div>
+                <div id="doc-upload-status" class="upload-status-text">
+                  <span>Uploading PDF to Cloudinary...</span>
+                  <span id="doc-progress-percent">0%</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+              <button type="submit" class="btn btn-primary" id="btn-upload-doc" style="font-weight: 700;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                Upload Document to Cloudinary
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="management-panel-card">
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">Uploaded Documents & Downloads</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Available official PDFs stored in Cloudinary and registered in Firestore:</p>
+          <div id="admin-docs-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <!-- Dynamically populated from Firestore -->
+          </div>
+        </div>
       </div>
 
       <!-- VIEW 3: GENERIC COMING SOON PANE FOR OTHER MODULES -->

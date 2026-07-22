@@ -4,6 +4,8 @@
  * Handles SPA routing, interactive transitions, portals warnings, FAQ accordion, lightboxes, and contact submissions.
  */
 
+import { HGS_DB } from './database.js';
+
 document.addEventListener('DOMContentLoaded', () => {
   // --- STATE & CONFIG ---
   const CONFIG = {
@@ -13,6 +15,81 @@ document.addEventListener('DOMContentLoaded', () => {
     defaultRoute: 'home',
     routes: ['home', 'about', 'admission', 'gallery', 'contact', 'portals']
   };
+
+  // --- DYNAMIC FIRESTORE WEBSITE SYNC ---
+  const syncWebsiteWithFirestore = async () => {
+    try {
+      // 1. Homepage Config (Logo, Hero Background, Welcome Message)
+      const config = await HGS_DB.dbGetDoc('settings', 'homepage');
+      if (config) {
+        if (config.logoUrl) {
+          document.querySelectorAll('.logo-img, .logo-img-wrapper img, .badge-logo-container img').forEach(img => {
+            img.src = config.logoUrl;
+          });
+        }
+        if (config.heroBgUrl) {
+          document.querySelectorAll('.hero-bg').forEach(img => {
+            img.src = config.heroBgUrl;
+          });
+        }
+        if (config.welcomeTitle) {
+          const welcomeHeading = document.querySelector('#home-view .welcome-text h2');
+          if (welcomeHeading) welcomeHeading.textContent = config.welcomeTitle;
+        }
+        if (config.welcomeMessage) {
+          const welcomeBody = document.querySelector('.welcome-message-content');
+          if (welcomeBody) {
+            welcomeBody.innerHTML = `<p>${config.welcomeMessage.replace(/\n\n/g, '</p><p>')}</p>`;
+          }
+        }
+        if (config.topBannerText) {
+          let bannerEl = document.getElementById('hgs-announcement-bar');
+          if (!bannerEl) {
+            bannerEl = document.createElement('div');
+            bannerEl.id = 'hgs-announcement-bar';
+            bannerEl.style.cssText = 'background: var(--primary); color: var(--accent); padding: 0.5rem 1rem; text-align: center; font-size: 0.85rem; font-weight: 700; border-bottom: 1px solid var(--accent); position: relative; z-index: 100;';
+            document.body.insertBefore(bannerEl, document.body.firstChild);
+          }
+          bannerEl.textContent = config.topBannerText;
+        }
+      }
+
+      // 2. Gallery Photos Sync
+      const galleryItems = await HGS_DB.dbQueryDocs('gallery');
+      if (galleryItems && galleryItems.length > 0) {
+        const galleryGrid = document.getElementById('gallery-grid');
+        if (galleryGrid) {
+          galleryItems.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+          galleryGrid.innerHTML = galleryItems.map(item => `
+            <div class="gallery-card animate-card" data-category="${item.category || 'all'}">
+              <div class="gallery-img-wrapper">
+                <img src="${item.imageUrl}" alt="${item.caption || 'School Photo'}" class="gallery-img" referrerPolicy="no-referrer">
+                <div class="gallery-card-overlay">
+                  <button class="gallery-zoom-btn" title="Zoom image" aria-label="Zoom image">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                      <line x1="11" y1="8" x2="11" y2="14"></line>
+                      <line x1="8" y1="11" x2="14" y2="11"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="gallery-card-info">
+                <h3 class="card-title" style="color: var(--primary); margin-bottom: 0.5rem;">${item.caption || 'School Photo'}</h3>
+                <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--accent); font-weight: 600; letter-spacing: 1px;">${item.category || 'General'}</span>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+    } catch (err) {
+      console.warn('Firestore sync error:', err);
+    }
+  };
+
+  syncWebsiteWithFirestore();
 
   // --- DOM ELEMENTS ---
   const header = document.getElementById('header');
