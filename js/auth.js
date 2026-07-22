@@ -236,6 +236,15 @@ import { doc, getDoc, setDoc, collection, query, where, getDocs } from 'firebase
         createdAt: adminData.createdAt || new Date().toISOString()
       };
 
+      // Ensure administrator record exists under firebaseUser.uid in Firestore
+      if (firebaseUser) {
+        try {
+          await setDoc(doc(db, 'administrators', firebaseUser.uid), adminProfile, { merge: true });
+        } catch (e) {
+          console.warn("Could not save admin profile to Firestore doc:", e);
+        }
+      }
+
       // 5. Save Session
       if (global.HGS_SESSION && typeof global.HGS_SESSION.saveSession === 'function') {
         global.HGS_SESSION.saveSession(adminProfile);

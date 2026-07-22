@@ -184,15 +184,21 @@ import { doc, getDoc } from 'firebase/firestore';
         let profile = null;
         const uid = firebaseUser.uid;
 
-        // Try applicants first
-        const appSnap = await getDoc(doc(db, 'applicants', uid));
-        if (appSnap.exists()) {
-          profile = { uid: uid, email: firebaseUser.email, ...appSnap.data(), role: 'applicant' };
+        // Try administrator first
+        const adminSnap = await getDoc(doc(db, 'administrators', uid));
+        if (adminSnap.exists() || firebaseUser.email === 'hisgraceschoolagbugburu@gmail.com') {
+          profile = {
+            uid: uid,
+            email: firebaseUser.email,
+            ...(adminSnap.exists() ? adminSnap.data() : {}),
+            role: 'administrator',
+            fullName: adminSnap.exists() && adminSnap.data().fullName ? adminSnap.data().fullName : 'Dr. Gabriel Okonjo'
+          };
         } else {
-          // Try admin
-          const adminSnap = await getDoc(doc(db, 'administrators', uid));
-          if (adminSnap.exists()) {
-            profile = { uid: uid, email: firebaseUser.email, ...adminSnap.data(), role: 'administrator' };
+          // Try applicants
+          const appSnap = await getDoc(doc(db, 'applicants', uid));
+          if (appSnap.exists()) {
+            profile = { uid: uid, email: firebaseUser.email, ...appSnap.data(), role: 'applicant' };
           } else {
             // Try teachers
             const tchSnap = await getDoc(doc(db, 'teachers', uid));
@@ -219,7 +225,11 @@ import { doc, getDoc } from 'firebase/firestore';
         console.error("Error fetching user profile on auth change:", err);
       }
     } else {
-      HGS_SESSION.clearSession();
+      // If no Firebase Auth user is present, only clear session if active session is already expired or absent
+      const currentUser = HGS_SESSION.getCurrentUser();
+      if (!currentUser) {
+        HGS_SESSION.clearSession();
+      }
     }
   });
 
