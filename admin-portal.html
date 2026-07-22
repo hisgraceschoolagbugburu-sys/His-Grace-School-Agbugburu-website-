@@ -3,1471 +3,863 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Administrator Portal | His Grace School Agbugburu</title>
+  <title>Enterprise Administrator Portal | His Grace School Agbugburu</title>
   
-  <!-- SEO & Meta Description -->
-  <meta name="description" content="Master Control Center for His Grace School Agbugburu administration. Manage homepage content, admissions, student records, staff accounts, results, timetables, and system settings.">
+  <meta name="description" content="Master Enterprise Administration System for His Grace School Agbugburu.">
   
-  <!-- CSS Stylesheets -->
   <link rel="stylesheet" href="css/style.css">
 
   <style>
-    /* Custom Styling for Master Control Center Enterprise Dashboard */
+    :root {
+      --admin-sidebar-width: 280px;
+      --admin-header-height: 70px;
+      --admin-bg: #F1F5F9;
+      --admin-sidebar-bg: #0F172A;
+      --admin-primary: #123E7C;
+      --admin-accent: #D4AF37;
+    }
+
+    body {
+      background-color: var(--admin-bg);
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
     .admin-app-layout {
       display: flex;
-      min-height: calc(100vh - var(--header-height));
-      background-color: var(--secondary-bg);
+      min-height: 100vh;
     }
 
     /* Sidebar Navigation */
     .admin-sidebar {
-      width: 270px;
-      background: #092144; /* Darker navy for executive contrast */
-      color: var(--white);
+      width: var(--admin-sidebar-width);
+      background-color: var(--admin-sidebar-bg);
+      color: #94A3B8;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      position: sticky;
-      top: var(--header-height);
-      height: calc(100vh - var(--header-height));
-      overflow-y: auto;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
       z-index: 100;
-      transition: var(--transition-smooth);
-      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .admin-sidebar-header {
-      padding: 1.5rem 1.25rem 1rem 1.25rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .admin-role-pill {
-      display: inline-flex;
+    .admin-sidebar-brand {
+      height: var(--admin-header-height);
+      display: flex;
       align-items: center;
-      gap: 0.4rem;
-      background: rgba(212, 175, 55, 0.2);
-      color: var(--accent);
-      border: 1px solid rgba(212, 175, 55, 0.4);
-      padding: 0.25rem 0.65rem;
-      border-radius: var(--radius-full);
-      font-size: 0.725rem;
+      padding: 0 1.5rem;
+      gap: 0.85rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .admin-sidebar-crest {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1.5px solid var(--admin-accent);
+      padding: 2px;
+      background: #FFF;
+    }
+
+    .admin-sidebar-crest img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 50%;
+    }
+
+    .admin-brand-text h2 {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin: 0;
+      line-height: 1.1;
+    }
+
+    .admin-brand-text span {
+      font-size: 0.7rem;
+      color: var(--admin-accent);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .admin-nav-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.25rem 0.85rem;
+    }
+
+    .admin-nav-section-title {
+      font-size: 0.675rem;
       font-weight: 700;
       text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #64748B;
+      padding: 0.75rem 0.85rem 0.35rem 0.85rem;
+    }
+
+    .admin-nav-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1rem 0;
+    }
+
+    .admin-nav-item button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.75rem 1rem;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #94A3B8;
+      background: transparent;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .admin-nav-item button:hover {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .admin-nav-item.active button {
+      color: #FFFFFF;
+      background: var(--admin-primary);
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(18, 62, 124, 0.4);
+    }
+
+    .admin-nav-item.active button svg {
+      color: var(--admin-accent);
+    }
+
+    .admin-sidebar-footer {
+      padding: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .admin-user-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .admin-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--admin-primary);
+      color: #FFF;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--admin-accent);
+    }
+
+    .admin-user-info h4 {
+      font-size: 0.85rem;
+      color: #FFF;
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .admin-user-info p {
+      font-size: 0.725rem;
+      color: #64748B;
+      margin: 0;
+    }
+
+    /* Main Workspace Layout */
+    .admin-main-wrapper {
+      margin-left: var(--admin-sidebar-width);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .admin-topbar {
+      height: var(--admin-header-height);
+      background: #FFFFFF;
+      border-bottom: 1px solid #E2E8F0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .topbar-title-area h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--admin-primary);
+      margin: 0;
+    }
+
+    .topbar-title-area p {
+      font-size: 0.775rem;
+      color: #64748B;
+      margin: 0;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .badge-session {
+      background: rgba(212, 175, 55, 0.15);
+      color: #785A00;
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.775rem;
+      font-weight: 700;
+    }
+
+    .btn-logout {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #FEE2E2;
+      color: #991B1B;
+      border: 1px solid #FCA5A5;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.825rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-logout:hover {
+      background: #DC2626;
+      color: #FFFFFF;
+    }
+
+    /* Content Panels */
+    .admin-content-area {
+      padding: 2rem;
+      flex: 1;
+    }
+
+    .tab-panel {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Metric Cards */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .metric-card {
+      background: #FFFFFF;
+      padding: 1.5rem;
+      border-radius: 16px;
+      border: 1px solid #E2E8F0;
+      box-shadow: 0 4px 12px rgba(18, 62, 124, 0.04);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: transform 0.2s ease;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(18, 62, 124, 0.08);
+    }
+
+    .metric-info h3 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #64748B;
+      font-weight: 600;
+      margin: 0 0 0.35rem 0;
+    }
+
+    .metric-info .number {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--admin-primary);
+      margin: 0;
+      line-height: 1;
+    }
+
+    .metric-icon-box {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(18, 62, 124, 0.1) 0%, rgba(212, 175, 55, 0.15) 100%);
+      color: var(--admin-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Enterprise Table Styling */
+    .panel-card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      border: 1px solid #E2E8F0;
+      box-shadow: 0 4px 16px rgba(18, 62, 124, 0.04);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .panel-card-header {
+      padding: 1.25rem 1.75rem;
+      border-bottom: 1px solid #E2E8F0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #FAFAFA;
+    }
+
+    .panel-card-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--admin-primary);
+      margin: 0;
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+
+    .data-table th {
+      background: #F8FAFC;
+      color: #475569;
+      font-weight: 700;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #E2E8F0;
+      text-transform: uppercase;
+      font-size: 0.725rem;
       letter-spacing: 0.5px;
     }
 
-    .admin-sidebar-menu {
-      list-style: none;
-      padding: 0.85rem 0.65rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
+    .data-table td {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #F1F5F9;
+      color: #1E293B;
+      vertical-align: middle;
     }
 
-    .admin-nav-btn {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      padding: 0.7rem 0.85rem;
-      border-radius: var(--radius-md);
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.8);
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      transition: var(--transition-fast);
-      text-align: left;
+    .data-table tr:hover {
+      background-color: #F8FAFC;
     }
 
-    .admin-nav-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--white);
-    }
-
-    .admin-nav-btn.active {
-      background: var(--primary);
-      color: var(--white);
-      border-left: 3px solid var(--accent);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .admin-nav-btn.active svg {
-      color: var(--accent);
-    }
-
-    .admin-nav-btn.logout-btn {
-      color: #F87171;
-    }
-
-    .admin-nav-btn.logout-btn:hover {
-      background: rgba(220, 38, 38, 0.2);
-      color: #FECACA;
-    }
-
-    .cs-badge-mini {
-      font-size: 0.625rem;
-      background: rgba(212, 175, 55, 0.2);
-      color: var(--accent);
-      padding: 0.15rem 0.4rem;
-      border-radius: var(--radius-sm);
-      margin-left: auto;
-      font-weight: 700;
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      text-transform: uppercase;
-    }
-
-    /* Main Content */
-    .admin-main-content {
-      flex: 1;
-      padding: 2rem;
-      overflow-y: auto;
-    }
-
-    @media (max-width: 992px) {
-      .admin-app-layout {
-        flex-direction: column;
-      }
-      .admin-sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-        top: 0;
-      }
-      .admin-sidebar-menu {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-        gap: 0.4rem;
-      }
-      .admin-main-content {
-        padding: 1.25rem;
-      }
-    }
-
-    /* WELCOME HERO BANNER */
-    .admin-hero-banner {
-      background: linear-gradient(135deg, #092144 0%, var(--primary) 100%);
-      color: var(--white);
-      border-radius: var(--radius-lg);
-      padding: 2.25rem;
-      box-shadow: var(--shadow-lg);
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1.75rem;
-      flex-wrap: wrap;
-      border: 1px solid rgba(212, 175, 55, 0.25);
-    }
-
-    .admin-hero-banner::after {
-      content: '';
-      position: absolute;
-      right: -60px;
-      bottom: -60px;
-      width: 280px;
-      height: 280px;
-      background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .admin-hero-text h2 {
-      font-size: 1.85rem;
-      font-weight: 800;
-      color: var(--white);
-      margin-bottom: 0.4rem;
-    }
-
-    .admin-meta-list {
-      display: flex;
-      gap: 1.25rem;
-      flex-wrap: wrap;
-      margin-top: 1rem;
-      font-size: 0.875rem;
-      color: rgba(255, 255, 255, 0.88);
-    }
-
-    .admin-meta-chip {
+    .status-badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.45rem;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 0.35rem 0.85rem;
-      border-radius: var(--radius-full);
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-
-    .admin-photo-frame {
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      border: 3px solid var(--accent);
-      padding: 3px;
-      background: var(--white);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-      flex-shrink: 0;
-    }
-
-    .admin-photo-frame img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-    }
-
-    /* QUICK ACTIONS BAR */
-    .admin-quick-actions {
-      display: flex;
-      gap: 0.85rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-
-    .qa-admin-btn {
-      flex: 1;
-      min-width: 170px;
-      padding: 0.85rem 1.25rem;
-      border-radius: var(--radius-md);
-      background: var(--white);
-      border: 1px solid var(--border);
-      color: var(--primary);
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.725rem;
       font-weight: 700;
-      font-size: 0.875rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.55rem;
-      cursor: pointer;
-      box-shadow: var(--shadow-sm);
-      transition: var(--transition-fast);
-    }
-
-    .qa-admin-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-    }
-
-    /* SUMMARY STATS GRID */
-    .admin-stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 1.25rem;
-      margin-bottom: 2.25rem;
-    }
-
-    .stat-card-item {
-      background: var(--white);
-      border-radius: var(--radius-md);
-      padding: 1.25rem 1.5rem;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-sm);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      transition: var(--transition-fast);
-    }
-
-    .stat-card-item:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-md);
-      border-color: rgba(18, 62, 124, 0.25);
-    }
-
-    .stat-number {
-      font-size: 1.85rem;
-      font-weight: 800;
-      color: var(--primary);
-      line-height: 1;
-      margin-bottom: 0.25rem;
-    }
-
-    .stat-label {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.4px;
     }
 
-    .stat-icon-wrapper {
-      width: 48px;
-      height: 48px;
-      border-radius: var(--radius-md);
-      background: rgba(18, 62, 124, 0.06);
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    /* MAIN CONTROL MODULES GRID */
-    .control-modules-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 1.35rem;
-      margin-bottom: 2.5rem;
-    }
-
-    .module-card-item {
-      background: var(--white);
-      border-radius: var(--radius-md);
-      padding: 1.5rem;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-sm);
-      transition: var(--transition-smooth);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 195px;
-      cursor: pointer;
-      position: relative;
-    }
-
-    .module-card-item:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-md);
-      border-color: rgba(212, 175, 55, 0.5);
-    }
-
-    .module-card-item.active-module {
-      border-left: 4px solid var(--accent);
-    }
-
-    .mod-icon-box {
-      width: 46px;
-      height: 46px;
-      border-radius: var(--radius-md);
-      background: var(--secondary-bg);
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 0.85rem;
-      font-size: 1.25rem;
-    }
-
-    .module-card-item:hover .mod-icon-box {
-      background: var(--primary);
-      color: var(--accent);
-    }
-
-    .module-card-item h3 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 0.25rem;
-    }
-
-    .module-card-item p {
-      font-size: 0.825rem;
-      color: var(--text-muted);
-      margin-bottom: 0;
-      line-height: 1.4;
-    }
-
-    .badge-active-tag {
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: #059669;
+    .status-badge.active, .status-badge.approved {
       background: #D1FAE5;
-      padding: 0.2rem 0.55rem;
-      border-radius: var(--radius-full);
-      text-transform: uppercase;
-      border: 1px solid #A7F3D0;
-      display: inline-block;
-      margin-top: 0.5rem;
+      color: #065F46;
     }
 
-    .badge-cs-tag {
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: #92400E;
+    .status-badge.pending, .status-badge.draft {
       background: #FEF3C7;
-      padding: 0.2rem 0.55rem;
-      border-radius: var(--radius-full);
-      text-transform: uppercase;
-      border: 1px solid #FDE68A;
-      display: inline-block;
-      margin-top: 0.5rem;
+      color: #92400E;
     }
 
-    /* HOMEPAGE MANAGEMENT STYLING */
-    .management-panel-card {
-      background: var(--white);
-      border-radius: var(--radius-lg);
-      padding: 2.25rem;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-md);
-      margin-bottom: 2rem;
+    .status-badge.rejected {
+      background: #FEE2E2;
+      color: #991B1B;
     }
 
-    .management-section-header {
-      padding-bottom: 1.25rem;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 1.75rem;
-    }
-
-    .mg-form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 1.75rem;
-    }
-
-    .upload-dropzone-box {
-      border: 2px dashed var(--border);
-      border-radius: var(--radius-md);
-      padding: 1.75rem 1rem;
-      text-align: center;
-      background: var(--secondary-bg);
+    .btn-action-sm {
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.775rem;
+      font-weight: 600;
+      border: none;
       cursor: pointer;
-      transition: var(--transition-fast);
-      position: relative;
+      transition: all 0.2s ease;
+      font-family: 'Poppins', sans-serif;
     }
 
-    .upload-dropzone-box:hover {
-      border-color: var(--primary);
-      background: rgba(18, 62, 124, 0.03);
+    .btn-primary-sm {
+      background: var(--admin-primary);
+      color: #FFF;
     }
 
-    .dropzone-preview-thumb {
+    .btn-primary-sm:hover {
+      background: #0A2852;
+    }
+
+    .btn-success-sm {
+      background: #059669;
+      color: #FFF;
+    }
+
+    .btn-danger-sm {
+      background: #DC2626;
+      color: #FFF;
+    }
+
+    /* Modal Styling */
+    .admin-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      padding: 1rem;
+    }
+
+    .admin-modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .admin-modal-box {
+      background: #FFFFFF;
       width: 100%;
-      height: 120px;
-      object-fit: cover;
-      border-radius: var(--radius-sm);
-      margin-bottom: 0.85rem;
-      border: 1px solid var(--border);
-    }
-
-    /* NOTIFICATION CONTAINER */
-    .notif-card-box {
-      background: var(--white);
-      border-radius: var(--radius-lg);
-      padding: 2.25rem;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-md);
-      margin-bottom: 2rem;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
     }
   </style>
 </head>
 <body>
 
-  <!-- ========================================================= -->
-  <!-- HEADER & NAVIGATION                                       -->
-  <!-- ========================================================= -->
-  <header id="header" class="header">
-    <div class="container header-container">
-      <!-- Logo Block -->
-      <a href="index.html#/home" class="logo-link" id="logo-nav-link">
-        <div class="logo-img-wrapper">
-          <img src="/src/assets/images/school_crest_logo_1784645340046.jpg" alt="His Grace School Agbugburu Logo" class="logo-img" referrerPolicy="no-referrer">
+  <div class="admin-app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-brand">
+        <div class="admin-sidebar-crest">
+          <img src="assets/images/logo.png" alt="His Grace Crest">
         </div>
-        <div class="logo-text">
-          <span class="logo-title">His Grace School</span>
-          <span class="logo-subtitle">Agbugburu</span>
+        <div class="admin-brand-text">
+          <h2>HIS GRACE SCHOOL</h2>
+          <span>Admin Master</span>
         </div>
-      </a>
+      </div>
 
-      <!-- Desktop Navigation Menu -->
-      <ul class="nav-menu" id="nav-menu">
-        <li><a href="index.html#/home" class="nav-link">Home</a></li>
-        <li><a href="index.html#/about" class="nav-link">About Us</a></li>
-        <li><a href="index.html#/admission" class="nav-link">Admission</a></li>
-        <li><a href="index.html#/gallery" class="nav-link">Gallery</a></li>
-        <li><a href="index.html#/contact" class="nav-link">Contact Us</a></li>
-        
-        <!-- Portal Dropdown -->
-        <li class="dropdown active" id="portal-dropdown">
-          <a href="index.html#/portals" class="nav-link dropdown-toggle">
-            Portals
-            <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </a>
-          <ul class="dropdown-menu">
-            <li class="dropdown-item"><a href="applicant-login.html" class="dropdown-link">Applicant Portal</a></li>
-            <li class="dropdown-item"><a href="student-login.html" class="dropdown-link">Student Portal</a></li>
-            <li class="dropdown-item"><a href="teacher-login.html" class="dropdown-link">Teacher Portal</a></li>
-            <li class="dropdown-item"><a href="admin-portal.html" class="dropdown-link active">Administrator Portal</a></li>
-          </ul>
-        </li>
-      </ul>
-
-      <!-- Mobile Toggle -->
-      <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </div>
-  </header>
-
-  <!-- ========================================================= -->
-  <!-- MAIN LAYOUT: SIDEBAR + DASHBOARD CONTENT                  -->
-  <!-- ========================================================= -->
-  <div class="admin-app-layout" style="margin-top: var(--header-height);">
-    
-    <!-- EXECUTIVE SIDEBAR NAVIGATION -->
-    <aside class="admin-sidebar" id="admin-sidebar">
-      <div>
-        <div class="admin-sidebar-header">
-          <span class="admin-role-pill">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-            Master Control
-          </span>
-          <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--white); margin-top: 0.5rem; margin-bottom: 0.15rem;">
-            Dr. Gabriel Okonjo
-          </h4>
-          <span style="font-size: 0.775rem; color: rgba(255,255,255,0.7); display: block;">
-            Super Administrator
-          </span>
-        </div>
-
-        <ul class="admin-sidebar-menu">
-          <li>
-            <button class="admin-nav-btn active" data-tab="dashboard">
+      <div class="admin-nav-scroll">
+        <div class="admin-nav-section-title">Main Control</div>
+        <ul class="admin-nav-list">
+          <li class="admin-nav-item active">
+            <button data-tab="overview">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-              Dashboard
+              Dashboard Overview
             </button>
           </li>
-          <li>
-            <button class="admin-nav-btn" data-tab="homepage">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-              Homepage
+          <li class="admin-nav-item">
+            <button data-tab="admissions">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              Admissions Review
             </button>
           </li>
-          <li>
-            <button class="admin-nav-btn" data-tab="admissions">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-              Admissions
-              <span class="cs-badge-mini">Soon</span>
-            </button>
-          </li>
-          <li>
-            <button class="admin-nav-btn" data-tab="students">
+          <li class="admin-nav-item">
+            <button data-tab="students">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-              Students
-              <span class="cs-badge-mini">Soon</span>
+              Students Roster
             </button>
           </li>
-          <li>
-            <button class="admin-nav-btn" data-tab="teachers">
+          <li class="admin-nav-item">
+            <button data-tab="teachers">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-              Teachers
-              <span class="cs-badge-mini">Soon</span>
+              Teachers & Staff
             </button>
           </li>
-          <li>
-            <button class="admin-nav-btn" data-tab="gallery">
+        </ul>
+
+        <div class="admin-nav-section-title">Content & Media</div>
+        <ul class="admin-nav-list">
+          <li class="admin-nav-item">
+            <button data-tab="homepage">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+              Homepage Banner
+            </button>
+          </li>
+          <li class="admin-nav-item">
+            <button data-tab="gallery">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-              Gallery
-              <span class="cs-badge-mini" style="background: rgba(5, 150, 105, 0.2); color: #059669; border-color: rgba(5, 150, 105, 0.4);">Active</span>
+              Gallery Manager
             </button>
           </li>
-          <li>
-            <button class="admin-nav-btn" data-tab="news">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"></path></svg>
-              News
-              <span class="cs-badge-mini" style="background: rgba(5, 150, 105, 0.2); color: #059669; border-color: rgba(5, 150, 105, 0.4);">Active</span>
+          <li class="admin-nav-item">
+            <button data-tab="news">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10l5 5v11a2 2 0 0 1-2 2z"></path></svg>
+              News & Events
             </button>
           </li>
-          <li>
-            <button class="admin-nav-btn" data-tab="admission-letters">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line></svg>
-              Downloads & PDFs
-              <span class="cs-badge-mini" style="background: rgba(5, 150, 105, 0.2); color: #059669; border-color: rgba(5, 150, 105, 0.4);">Active</span>
+          <li class="admin-nav-item">
+            <button data-tab="downloads">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Downloadable Forms
             </button>
           </li>
-          <li>
-            <button class="admin-nav-btn" data-tab="results">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line></svg>
-              Results
-              <span class="cs-badge-mini">Soon</span>
-            </button>
-          </li>
-          <li>
-            <button class="admin-nav-btn" data-tab="timetable">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-              Timetable
-              <span class="cs-badge-mini">Soon</span>
-            </button>
-          </li>
-          <li>
-            <button class="admin-nav-btn" data-tab="fees">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-              Fees
-              <span class="cs-badge-mini">Soon</span>
-            </button>
-          </li>
-          <li>
-            <button class="admin-nav-btn" data-tab="qrcodes">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg>
-              QR Codes
-              <span class="cs-badge-mini">Soon</span>
-            </button>
-          </li>
-          <li>
-            <button class="admin-nav-btn" data-tab="settings">
+        </ul>
+
+        <div class="admin-nav-section-title">System & Audit</div>
+        <ul class="admin-nav-list">
+          <li class="admin-nav-item">
+            <button data-tab="settings">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-              Settings
-              <span class="cs-badge-mini">Soon</span>
+              School Settings
             </button>
           </li>
-          <li>
-            <button class="admin-nav-btn" data-tab="profile">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-              Profile
-              <span class="cs-badge-mini">Soon</span>
+          <li class="admin-nav-item">
+            <button data-tab="logs">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+              Activity Audit Logs
             </button>
           </li>
         </ul>
       </div>
 
-      <div style="padding: 1rem 0.65rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-        <button class="admin-nav-btn logout-btn" id="sidebar-admin-logout">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-          Logout
-        </button>
+      <div class="admin-sidebar-footer">
+        <div class="admin-user-profile">
+          <div class="admin-avatar">GO</div>
+          <div class="admin-user-info">
+            <h4 id="admin-user-name">Dr. Gabriel Okonjo</h4>
+            <p id="admin-user-id">HGS/ADM/2026</p>
+          </div>
+        </div>
       </div>
     </aside>
 
-    <!-- MAIN CONTENT VIEW PANE -->
-    <main class="admin-main-content">
-      
-      <!-- VIEW 1: MAIN DASHBOARD VIEW -->
-      <div class="tab-pane active" id="pane-admin-dashboard">
-        
-        <!-- WELCOME HERO CARD -->
-        <div class="admin-hero-banner">
-          <div class="admin-hero-text">
-            <span style="font-size: 0.825rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 1px;">
-              Master Control Center
-            </span>
-            <h2>Welcome, Dr. Gabriel Okonjo</h2>
-            <p style="color: rgba(255, 255, 255, 0.9); font-size: 0.95rem; margin-bottom: 0; max-width: 600px;">
-              Full administrative oversight of His Grace School Agbugburu website, admission workflows, staff credentials, and database registers.
-            </p>
-
-            <div class="admin-meta-list">
-              <div class="admin-meta-chip">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                Role: <strong style="color: var(--accent);">Super Administrator & IT Director</strong>
-              </div>
-              <div class="admin-meta-chip">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                Last Login: <strong>Today at 08:30 AM</strong>
-              </div>
-            </div>
-          </div>
-
-          <!-- Administrator Photo Frame -->
-          <div class="admin-photo-frame">
-            <img src="/src/assets/images/admin_portrait_1784674386721.jpg" alt="Administrator Photograph" referrerPolicy="no-referrer">
-          </div>
+    <!-- Main Content Area -->
+    <main class="admin-main-wrapper">
+      <header class="admin-topbar">
+        <div class="topbar-title-area">
+          <h1 id="panel-title">Dashboard Overview</h1>
+          <p id="panel-subtitle">Master System Monitoring & Operations</p>
         </div>
-
-        <!-- QUICK ACTIONS TOOLBAR -->
-        <div class="admin-quick-actions">
-          <button type="button" class="qa-admin-btn" id="qa-manage-homepage">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-            Manage Homepage
-          </button>
-          <button type="button" class="qa-admin-btn" id="qa-review-admissions">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line></svg>
-            Review Admissions
-          </button>
-          <button type="button" class="qa-admin-btn" id="qa-view-students">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
-            View Students
-          </button>
-          <button type="button" class="qa-admin-btn" id="qa-manage-teachers">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            Manage Teachers
-          </button>
-          <button type="button" class="qa-admin-btn" id="qa-admin-logout" style="color: #DC2626; border-color: #FCA5A5;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        <div class="topbar-actions">
+          <span class="badge-session">Session: 2026/2027 Term 1</span>
+          <button id="btn-admin-logout" class="btn-logout">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
             Logout
           </button>
         </div>
+      </header>
 
-        <!-- DASHBOARD SUMMARY CARDS -->
-        <div style="margin-bottom: 1.25rem;">
-          <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">System Overview Metrics</h3>
-          <p style="font-size: 0.875rem; color: var(--text-muted);">Real-time statistics across school portals and database registers:</p>
-        </div>
-
-        <div class="admin-stats-grid">
-          
-          <!-- 1. Total Students -->
-          <div class="stat-card-item">
-            <div>
-              <div class="stat-number">845</div>
-              <div class="stat-label">Total Students</div>
+      <div class="admin-content-area">
+        <!-- Tab 1: Overview -->
+        <section id="panel-overview" class="tab-panel active">
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-info">
+                <h3>Total Students</h3>
+                <div class="number" id="metric-students">428</div>
+              </div>
+              <div class="metric-icon-box">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+              </div>
             </div>
-            <div class="stat-icon-wrapper">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+
+            <div class="metric-card">
+              <div class="metric-info">
+                <h3>Academic Staff</h3>
+                <div class="number" id="metric-teachers">34</div>
+              </div>
+              <div class="metric-icon-box">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-info">
+                <h3>Pending Applicants</h3>
+                <div class="number" id="metric-applicants">18</div>
+              </div>
+              <div class="metric-icon-box">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-info">
+                <h3>Active Classes</h3>
+                <div class="number">16</div>
+              </div>
+              <div class="metric-icon-box">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect></svg>
+              </div>
             </div>
           </div>
 
-          <!-- 2. Total Teachers -->
-          <div class="stat-card-item">
-            <div>
-              <div class="stat-number">42</div>
-              <div class="stat-label">Total Teachers</div>
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <h2>Recent Admission Applications</h2>
+              <button class="btn-action-sm btn-primary-sm" id="btn-quick-admission">Manage All Admissions</button>
             </div>
-            <div class="stat-icon-wrapper">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            </div>
-          </div>
-
-          <!-- 3. Pending Admissions -->
-          <div class="stat-card-item" style="border-left: 3px solid var(--accent);">
-            <div>
-              <div class="stat-number" style="color: var(--accent);">18</div>
-              <div class="stat-label">Pending Admissions</div>
-            </div>
-            <div class="stat-icon-wrapper" style="background: rgba(212, 175, 55, 0.12); color: #B48811;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-            </div>
-          </div>
-
-          <!-- 4. Approved Admissions -->
-          <div class="stat-card-item">
-            <div>
-              <div class="stat-number" style="color: #059669;">124</div>
-              <div class="stat-label">Approved Admissions</div>
-            </div>
-            <div class="stat-icon-wrapper" style="background: #D1FAE5; color: #059669;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Application ID</th>
+                    <th>Applicant Name</th>
+                    <th>Desired Class</th>
+                    <th>Parent Phone</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="table-overview-admissions">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
             </div>
           </div>
+        </section>
 
-          <!-- 5. Gallery Images -->
-          <div class="stat-card-item">
-            <div>
-              <div class="stat-number">56</div>
-              <div class="stat-label">Gallery Images</div>
+        <!-- Tab 2: Admissions Management -->
+        <section id="panel-admissions" class="tab-panel">
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <h2>Admission Application Management</h2>
             </div>
-            <div class="stat-icon-wrapper">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Applicant ID</th>
+                    <th>Full Name</th>
+                    <th>Target Class</th>
+                    <th>Guardian Email</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="table-admissions">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
             </div>
           </div>
+        </section>
 
-          <!-- 6. News Posts -->
-          <div class="stat-card-item">
-            <div>
-              <div class="stat-number">12</div>
-              <div class="stat-label">News Posts</div>
+        <!-- Tab 3: Student Management -->
+        <section id="panel-students" class="tab-panel">
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <h2>Enrolled Students Directory</h2>
+              <button class="btn-action-sm btn-primary-sm" id="btn-add-student-modal">+ Register New Student</button>
             </div>
-            <div class="stat-icon-wrapper">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"></path></svg>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>Class</th>
+                    <th>Gender</th>
+                    <th>Parent Contact</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="table-students">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
             </div>
           </div>
+        </section>
 
-          <!-- 7. Website Visitors -->
-          <div class="stat-card-item">
-            <div>
-              <div class="stat-number">14,820</div>
-              <div class="stat-label">Website Visitors</div>
+        <!-- Tab 4: Teacher Management -->
+        <section id="panel-teachers" class="tab-panel">
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <h2>Academic Staff & Teacher Roster</h2>
+              <button class="btn-action-sm btn-primary-sm" id="btn-add-teacher-modal">+ Add New Staff</button>
             </div>
-            <div class="stat-icon-wrapper">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Staff ID</th>
+                    <th>Full Name</th>
+                    <th>Subject</th>
+                    <th>Assigned Class</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="table-teachers">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
             </div>
           </div>
+        </section>
 
-          <!-- 8. Unread Messages -->
-          <div class="stat-card-item">
-            <div>
-              <div class="stat-number" style="color: #2563EB;">3</div>
-              <div class="stat-label">Unread Messages</div>
+        <!-- Tab 5: Homepage Management -->
+        <section id="panel-homepage" class="tab-panel">
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <h2>Website Homepage Customization</h2>
             </div>
-            <div class="stat-icon-wrapper" style="background: #DBEAFE; color: #1D4ED8;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            <div style="padding: 1.75rem;">
+              <form id="form-homepage-cms">
+                <div style="margin-bottom: 1.25rem;">
+                  <label style="display: block; font-weight: 700; margin-bottom: 0.5rem;">Hero Title</label>
+                  <input type="text" id="cms-hero-title" class="form-input" value="Nurturing Academic Excellence & Moral Values" style="width: 100%;">
+                </div>
+                <div style="margin-bottom: 1.25rem;">
+                  <label style="display: block; font-weight: 700; margin-bottom: 0.5rem;">Hero Subtitle</label>
+                  <textarea id="cms-hero-sub" class="form-input" style="width: 100%; height: 80px;">Welcome to His Grace School Agbugburu, where we build future leaders through quality education.</textarea>
+                </div>
+                <button type="submit" class="btn-action-sm btn-primary-sm" style="padding: 0.75rem 1.5rem;">Save Homepage Settings</button>
+              </form>
             </div>
           </div>
+        </section>
 
-        </div>
-
-        <!-- MAIN CONTROL MODULES -->
-        <div style="margin-bottom: 1.25rem;">
-          <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">Main Control Modules</h3>
-          <p style="font-size: 0.875rem; color: var(--text-muted);">Access master administration tools and portal management services:</p>
-        </div>
-
-        <div class="control-modules-grid">
-          
-          <!-- 1. Homepage Management (Active) -->
-          <div class="module-card-item active-module" data-tab-target="homepage">
-            <div>
-              <div class="mod-icon-box">🏠</div>
-              <h3>Homepage Management</h3>
-              <p>Configure school logos, hero backgrounds, welcome message, banners & cards.</p>
+        <!-- Tab 6: Gallery Management -->
+        <section id="panel-gallery" class="tab-panel">
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <h2>School Photo Gallery Manager</h2>
             </div>
-            <div>
-              <span class="badge-active-tag">Active Module</span>
+            <div style="padding: 1.75rem;">
+              <p>Manage photo albums and facility images displayed on the public gallery page.</p>
+              <div id="gallery-items-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                <!-- Gallery preview thumbs -->
+              </div>
             </div>
           </div>
+        </section>
 
-          <!-- 2. Admission Management -->
-          <div class="module-card-item" data-tab-target="admissions">
-            <div>
-              <div class="mod-icon-box">🎓</div>
-              <h3>Admission Management</h3>
-              <p>Review applicant submissions, set interview schedules & update admission status.</p>
+        <!-- Tab 7: News Management -->
+        <section id="panel-news" class="tab-panel">
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <h2>School News & Announcements</h2>
             </div>
-            <div>
-              <span class="badge-cs-tag">Coming Soon</span>
+            <div style="padding: 1.75rem;">
+              <p>Publish school announcements, term calendars, and newsletters.</p>
             </div>
           </div>
+        </section>
 
-          <!-- 3. Student Management -->
-          <div class="module-card-item" data-tab-target="students">
-            <div>
-              <div class="mod-icon-box">👨‍🎓</div>
-              <h3>Student Management</h3>
-              <p>Master student directory, class assignments, guardian info & student portals.</p>
+        <!-- Tab 8: Downloads -->
+        <section id="panel-downloads" class="tab-panel">
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <h2>Downloadable Documents & Forms</h2>
             </div>
-            <div>
-              <span class="badge-cs-tag">Coming Soon</span>
+            <div style="padding: 1.75rem;">
+              <p>Academic Prospectus, Admission Forms, and Fee Schedule downloads.</p>
             </div>
           </div>
+        </section>
 
-          <!-- 4. Teacher Management -->
-          <div class="module-card-item" data-tab-target="teachers">
-            <div>
-              <div class="mod-icon-box">👨‍🏫</div>
-              <h3>Teacher Management</h3>
-              <p>Academic staff database, subject allocation, staff ID assignment & performance.</p>
+        <!-- Tab 9: Settings -->
+        <section id="panel-settings" class="tab-panel">
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <h2>System Settings & Password Management</h2>
             </div>
-            <div>
-              <span class="badge-cs-tag">Coming Soon</span>
+            <div style="padding: 1.75rem; max-width: 500px;">
+              <form id="form-admin-settings">
+                <div style="margin-bottom: 1.25rem;">
+                  <label style="display: block; font-weight: 700; margin-bottom: 0.5rem;">Official School Email</label>
+                  <input type="email" value="hisgraceschoolagbugburu@gmail.com" class="form-input" readonly style="background: #F1F5F9;">
+                </div>
+                <div style="margin-bottom: 1.25rem;">
+                  <label style="display: block; font-weight: 700; margin-bottom: 0.5rem;">New Master Password</label>
+                  <input type="password" id="new-admin-pass" class="form-input" placeholder="Enter new admin password">
+                </div>
+                <button type="submit" class="btn-action-sm btn-primary-sm" style="padding: 0.75rem 1.5rem;">Update Security Settings</button>
+              </form>
             </div>
           </div>
+        </section>
 
-          <!-- 5. Gallery Management -->
-          <div class="module-card-item" data-tab-target="gallery">
-            <div>
-              <div class="mod-icon-box">🖼</div>
-              <h3>Gallery Management</h3>
-              <p>Upload event photos, categorize school albums & publish campus highlights.</p>
+        <!-- Tab 10: Activity Audit Logs -->
+        <section id="panel-logs" class="tab-panel">
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <h2>System Security & Action Logs</h2>
             </div>
-            <div>
-              <span class="badge-cs-tag">Coming Soon</span>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>User ID</th>
+                    <th>Action</th>
+                    <th>IP / Session</th>
+                  </tr>
+                </thead>
+                <tbody id="table-logs">
+                  <tr>
+                    <td>2026-07-22 02:40:00</td>
+                    <td>HGS/ADM/2026</td>
+                    <td>Master Administrator Session Authenticated</td>
+                    <td>192.168.1.1 (Encrypted)</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
-
-          <!-- 6. News & Notice Board -->
-          <div class="module-card-item" data-tab-target="news">
-            <div>
-              <div class="mod-icon-box">📰</div>
-              <h3>News & Notice Board</h3>
-              <p>Publish academic circulars, school blog posts, term calendars & emergency alerts.</p>
-            </div>
-            <div>
-              <span class="badge-cs-tag">Coming Soon</span>
-            </div>
-          </div>
-
-          <!-- 7. Admission Letters -->
-          <div class="module-card-item" data-tab-target="admission-letters">
-            <div>
-              <div class="mod-icon-box">📄</div>
-              <h3>Admission Letters</h3>
-              <p>Generate official admission letter PDFs, fee structures & acceptance forms.</p>
-            </div>
-            <div>
-              <span class="badge-cs-tag">Coming Soon</span>
-            </div>
-          </div>
-
-          <!-- 8. QR Code Management -->
-          <div class="module-card-item" data-tab-target="qrcodes">
-            <div>
-              <div class="mod-icon-box">🔲</div>
-              <h3>QR Code Management</h3>
-              <p>Generate & verify security QR codes for student IDs, admission slips & certificates.</p>
-            </div>
-            <div>
-              <span class="badge-cs-tag">Coming Soon</span>
-            </div>
-          </div>
-
-          <!-- 9. Results Management -->
-          <div class="module-card-item" data-tab-target="results">
-            <div>
-              <div class="mod-icon-box">📚</div>
-              <h3>Results Management</h3>
-              <p>Approve teacher score sheets, compile term report cards & compute positions.</p>
-            </div>
-            <div>
-              <span class="badge-cs-tag">Coming Soon</span>
-            </div>
-          </div>
-
-          <!-- 10. Timetable Management -->
-          <div class="module-card-item" data-tab-target="timetable">
-            <div>
-              <div class="mod-icon-box">📅</div>
-              <h3>Timetable Management</h3>
-              <p>Create weekly class schedules, exam timetables & teacher period rosters.</p>
-            </div>
-            <div>
-              <span class="badge-cs-tag">Coming Soon</span>
-            </div>
-          </div>
-
-          <!-- 11. School Fees -->
-          <div class="module-card-item" data-tab-target="fees">
-            <div>
-              <div class="mod-icon-box">💰</div>
-              <h3>School Fees</h3>
-              <p>Configure term fee schedules, track payments & issue digital receipts.</p>
-            </div>
-            <div>
-              <span class="badge-cs-tag">Coming Soon</span>
-            </div>
-          </div>
-
-          <!-- 12. Website Settings -->
-          <div class="module-card-item" data-tab-target="settings">
-            <div>
-              <div class="mod-icon-box">⚙</div>
-              <h3>Website Settings</h3>
-              <p>Update school contact details, social media handles, address & SEO metadata.</p>
-            </div>
-            <div>
-              <span class="badge-cs-tag">Coming Soon</span>
-            </div>
-          </div>
-
-          <!-- 13. Administrator Profile -->
-          <div class="module-card-item" data-tab-target="profile">
-            <div>
-              <div class="mod-icon-box">👤</div>
-              <h3>Administrator Profile</h3>
-              <p>Manage IT Director credentials, security PIN & audit access logs.</p>
-            </div>
-            <div>
-              <span class="badge-cs-tag">Coming Soon</span>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- NOTIFICATIONS PANEL -->
-        <div class="notif-card-box">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
-            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 0;">
-              System Notifications & Circulars
-            </h3>
-            <span style="font-size: 0.75rem; background: var(--secondary-bg); padding: 0.25rem 0.65rem; border-radius: var(--radius-full); font-weight: 700; color: var(--text-muted); border: 1px solid var(--border);">
-              System Status: Optimal
-            </span>
-          </div>
-
-          <div style="text-align: center; padding: 2.5rem 1rem; color: var(--text-muted);">
-            <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--secondary-bg); color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; border: 1px solid var(--border);">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-            </div>
-            <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;">
-              No New Notifications
-            </h4>
-            <p style="font-size: 0.875rem; max-width: 420px; margin: 0 auto;">
-              All administrative systems and website modules are running normally. Administrative alerts will appear here.
-            </p>
-          </div>
-        </div>
-
+        </section>
       </div>
-
-      <!-- VIEW 2: HOMEPAGE MANAGEMENT (ACTIVE MODULE VIEW) -->
-      <div class="tab-pane" id="pane-admin-homepage" style="display: none;">
-        
-        <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
-          <div>
-            <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--primary); margin-bottom: 0.2rem;">
-              🏠 Homepage Management
-            </h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Configure primary landing page assets, hero media, text content, and banner cards</p>
-          </div>
-          <button type="button" class="btn btn-outline btn-return-dash" style="padding: 0.5rem 1rem;">
-            ← Back to Dashboard
-          </button>
-        </div>
-
-        <!-- HOMEPAGE MANAGEMENT CARDS -->
-        <div class="management-panel-card">
-          
-          <form id="homepage-config-form" novalidate>
-            
-            <div class="mg-form-grid">
-              
-              <!-- 1. Upload School Logo -->
-              <div>
-                <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                  1. Upload School Crest / Logo
-                </h4>
-                <p style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 1rem;">
-                  Official school crest displayed on header, reports & certificates (Recommended: PNG/JPG 400x400px).
-                </p>
-
-                <div class="upload-dropzone-box" id="dz-school-logo">
-                  <img src="/src/assets/images/school_crest_logo_1784645340046.jpg" alt="Current School Crest" id="preview-logo-img" class="dropzone-preview-thumb" style="width: 90px; height: 90px; object-fit: contain;" referrerPolicy="no-referrer">
-                  <p style="font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;">
-                    Click or Drag to Upload New Crest Logo
-                  </p>
-                  <span style="font-size: 0.75rem; color: var(--text-muted);">Cloudinary Direct Upload (kzpuxfve)</span>
-                  <input type="file" id="input-logo-file" accept="image/*" style="display: none;">
-                </div>
-                <!-- Progress Bar -->
-                <div id="logo-upload-progress" class="upload-progress-container">
-                  <div class="upload-progress-bar-bg">
-                    <div id="logo-progress-bar-fill" class="upload-progress-bar-fill"></div>
-                  </div>
-                  <div id="logo-upload-status" class="upload-status-text">
-                    <span>Uploading logo to Cloudinary...</span>
-                    <span id="logo-progress-percent">0%</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 2. Upload Hero Background Image -->
-              <div>
-                <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                  2. Upload Hero Background Image
-                </h4>
-                <p style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 1rem;">
-                  Primary high-resolution hero background image for main landing banner (Recommended: 1920x1080px).
-                </p>
-
-                <div class="upload-dropzone-box" id="dz-hero-bg">
-                  <img src="/src/assets/images/school_hero_background_1784645354887.jpg" alt="Current Hero Background" id="preview-hero-img" class="dropzone-preview-thumb" referrerPolicy="no-referrer">
-                  <p style="font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;">
-                    Click or Drag to Upload New Hero Background
-                  </p>
-                  <span style="font-size: 0.75rem; color: var(--text-muted);">Cloudinary Direct Upload (kzpuxfve)</span>
-                  <input type="file" id="input-hero-file" accept="image/*" style="display: none;">
-                </div>
-                <!-- Progress Bar -->
-                <div id="hero-upload-progress" class="upload-progress-container">
-                  <div class="upload-progress-bar-bg">
-                    <div id="hero-progress-bar-fill" class="upload-progress-bar-fill"></div>
-                  </div>
-                  <div id="hero-upload-status" class="upload-status-text">
-                    <span>Uploading background to Cloudinary...</span>
-                    <span id="hero-progress-percent">0%</span>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <hr style="border: none; border-top: 1px solid var(--border); margin: 2rem 0;">
-
-            <!-- 3. Edit Welcome Message -->
-            <div style="margin-bottom: 2rem;">
-              <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                3. Edit Welcome Message
-              </h4>
-              <p style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 1rem;">
-                Set the main headline and welcome paragraph displayed on the home page hero section:
-              </p>
-
-              <div style="display: flex; flex-direction: column; gap: 1rem;">
-                <div>
-                  <label for="welcome-headline" class="form-label" style="font-weight: 600;">Hero Headline</label>
-                  <input 
-                    type="text" 
-                    id="welcome-headline" 
-                    class="form-input" 
-                    value="Welcome to His Grace School Agbugburu" 
-                    style="font-weight: 700; color: var(--primary);"
-                  >
-                </div>
-
-                <div>
-                  <label for="welcome-body" class="form-label" style="font-weight: 600;">Welcome Subtitle / Description</label>
-                  <textarea 
-                    id="welcome-body" 
-                    class="form-textarea" 
-                    rows="3" 
-                    style="line-height: 1.6;"
-                  >Nurturing future leaders through academic excellence, sound moral discipline, innovative science learning, and holistic child development in a serene learning environment.</textarea>
-                </div>
-              </div>
-            </div>
-
-            <!-- 4. Update Homepage Banners -->
-            <div style="margin-bottom: 2rem;">
-              <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-                4. Update Homepage Announcement Banners
-              </h4>
-              <p style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 1rem;">
-                Top notification alert bar message displayed at the top of the homepage:
-              </p>
-
-              <div>
-                <label for="top-banner-text" class="form-label" style="font-weight: 600;">Top Announcement Alert Bar</label>
-                <input 
-                  type="text" 
-                  id="top-banner-text" 
-                  class="form-input" 
-                  value="🎓 Admissions Open for 2026/2027 Academic Session! Apply Online Now."
-                >
-              </div>
-            </div>
-
-            <!-- 5. Manage Homepage Cards -->
-            <div style="margin-bottom: 2rem;">
-              <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                5. Manage Homepage Feature Cards
-              </h4>
-              <p style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 1rem;">
-                Configure the 3 main feature highlight cards displayed on the homepage:
-              </p>
-
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem;">
-                
-                <div style="background: var(--secondary-bg); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
-                  <label class="form-label" style="font-weight: 700; color: var(--primary);">Card 1: Academic Excellence</label>
-                  <input type="text" class="form-input" value="Academic Excellence" style="margin-bottom: 0.75rem;">
-                  <textarea class="form-textarea" rows="2" style="font-size: 0.85rem;">Comprehensive curriculum with certified tutors and modern STEM laboratories.</textarea>
-                </div>
-
-                <div style="background: var(--secondary-bg); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
-                  <label class="form-label" style="font-weight: 700; color: var(--primary);">Card 2: Moral Discipline</label>
-                  <input type="text" class="form-input" value="Moral Discipline & Values" style="margin-bottom: 0.75rem;">
-                  <textarea class="form-textarea" rows="2" style="font-size: 0.85rem;">Instilling integrity, godly values, respect, and leadership qualities in every child.</textarea>
-                </div>
-
-                <div style="background: var(--secondary-bg); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
-                  <label class="form-label" style="font-weight: 700; color: var(--primary);">Card 3: Modern Facilities</label>
-                  <input type="text" class="form-input" value="Modern Campus Facilities" style="margin-bottom: 0.75rem;">
-                  <textarea class="form-textarea" rows="2" style="font-size: 0.85rem;">Equipped computer laboratory, standard library, sports facilities, and serene environment.</textarea>
-                </div>
-
-              </div>
-            </div>
-
-            <!-- Save Action Button -->
-            <div style="display: flex; gap: 1rem; align-items: center; justify-content: flex-end; padding-top: 1rem; border-top: 1px solid var(--border);">
-              <button type="button" class="btn btn-outline btn-return-dash" style="padding: 0.75rem 1.5rem;">
-                Cancel Changes
-              </button>
-              <button type="submit" class="btn btn-primary" id="btn-save-homepage" style="padding: 0.75rem 2rem; font-weight: 700;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Save Homepage Configuration
-              </button>
-            </div>
-
-          </form>
-
-        </div>
-
-      </div>
-
-      <!-- VIEW 4: GALLERY MANAGEMENT PANE -->
-      <div class="tab-pane" id="pane-admin-gallery" style="display: none;">
-        <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
-          <div>
-            <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--primary); margin-bottom: 0.2rem;">
-              🖼 Gallery Management
-            </h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Upload campus event photos, edit image captions, and manage the official school photo gallery.</p>
-          </div>
-          <button type="button" class="btn btn-outline btn-return-dash" style="padding: 0.5rem 1rem;">
-            ← Back to Dashboard
-          </button>
-        </div>
-
-        <div class="management-panel-card">
-          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem;">Upload New Gallery Photo</h3>
-          <form id="gallery-upload-form" novalidate>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
-              <div>
-                <label for="gallery-caption-input" class="form-label" style="font-weight: 600;">Photo Caption / Title</label>
-                <input type="text" id="gallery-caption-input" class="form-input" placeholder="e.g. Annual Sports Day 2026 Parade" required>
-              </div>
-              <div>
-                <label for="gallery-category-select" class="form-label" style="font-weight: 600;">Category</label>
-                <select id="gallery-category-select" class="form-select">
-                  <option value="campus">Campus & Facilities</option>
-                  <option value="academics">Academics & Science</option>
-                  <option value="sports">Sports & Inter-house</option>
-                  <option value="events">Events & Celebrations</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="upload-dropzone-box" id="dz-gallery-photo">
-              <p style="font-size: 0.9rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;">
-                Click or Drag to Upload Photo (JPG, PNG, WEBP — Max 10 MB)
-              </p>
-              <span id="gallery-file-label" style="font-size: 0.8rem; color: var(--text-muted);">No file selected</span>
-              <input type="file" id="input-gallery-file" accept="image/*" style="display: none;">
-            </div>
-
-            <!-- Progress Bar -->
-            <div id="gallery-upload-progress" class="upload-progress-container">
-              <div class="upload-progress-bar-bg">
-                <div id="gallery-progress-bar-fill" class="upload-progress-bar-fill"></div>
-              </div>
-              <div id="gallery-upload-status" class="upload-status-text">
-                <span>Uploading to Cloudinary...</span>
-                <span id="gallery-progress-percent">0%</span>
-              </div>
-            </div>
-
-            <div style="margin-top: 1.25rem; display: flex; justify-content: flex-end;">
-              <button type="submit" class="btn btn-primary" id="btn-upload-gallery" style="font-weight: 700;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                Upload Photo to Gallery
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <div class="management-panel-card">
-          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">Current Gallery Photos</h3>
-          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Stored secure Cloudinary image links and Firestore metadata:</p>
-          <div id="admin-gallery-grid" class="gallery-admin-grid">
-            <!-- Dynamically populated from Firestore -->
-          </div>
-        </div>
-      </div>
-
-      <!-- VIEW 5: NEWS MANAGEMENT PANE -->
-      <div class="tab-pane" id="pane-admin-news" style="display: none;">
-        <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
-          <div>
-            <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--primary); margin-bottom: 0.2rem;">
-              📰 News & Notice Board Management
-            </h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Publish academic circulars, school notices, term updates, and upload featured images.</p>
-          </div>
-          <button type="button" class="btn btn-outline btn-return-dash" style="padding: 0.5rem 1rem;">
-            ← Back to Dashboard
-          </button>
-        </div>
-
-        <div class="management-panel-card">
-          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem;">Publish New News / Notice</h3>
-          <form id="news-upload-form" novalidate>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
-              <div>
-                <label for="news-title-input" class="form-label" style="font-weight: 600;">Post Title</label>
-                <input type="text" id="news-title-input" class="form-input" placeholder="e.g. 2026/2027 Academic Term Resumption Date" required>
-              </div>
-              <div>
-                <label for="news-category-select" class="form-label" style="font-weight: 600;">Category / Badge</label>
-                <select id="news-category-select" class="form-select">
-                  <option value="Academic Notice">Academic Notice</option>
-                  <option value="Admission Circular">Admission Circular</option>
-                  <option value="School Event">School Event</option>
-                  <option value="General Circular">General Circular</option>
-                </select>
-              </div>
-            </div>
-
-            <div style="margin-bottom: 1.25rem;">
-              <label for="news-body-input" class="form-label" style="font-weight: 600;">News Summary / Announcement Content</label>
-              <textarea id="news-body-input" class="form-textarea" rows="4" placeholder="Enter detailed announcement message..." required></textarea>
-            </div>
-
-            <div style="margin-bottom: 1.25rem;">
-              <label class="form-label" style="font-weight: 600;">Featured News Image (Cloudinary Upload)</label>
-              <div class="upload-dropzone-box" id="dz-news-image">
-                <p style="font-size: 0.9rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;">
-                  Click or Drag to Upload Featured Image (JPG, PNG, WEBP — Max 10 MB)
-                </p>
-                <span id="news-file-label" style="font-size: 0.8rem; color: var(--text-muted);">No image selected</span>
-                <input type="file" id="input-news-file" accept="image/*" style="display: none;">
-              </div>
-
-              <!-- Progress Bar -->
-              <div id="news-upload-progress" class="upload-progress-container">
-                <div class="upload-progress-bar-bg">
-                  <div id="news-progress-bar-fill" class="upload-progress-bar-fill"></div>
-                </div>
-                <div id="news-upload-status" class="upload-status-text">
-                  <span>Uploading image to Cloudinary...</span>
-                  <span id="news-progress-percent">0%</span>
-                </div>
-              </div>
-            </div>
-
-            <div style="display: flex; justify-content: flex-end;">
-              <button type="submit" class="btn btn-primary" id="btn-publish-news" style="font-weight: 700;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"></path></svg>
-                Publish News Post
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <div class="management-panel-card">
-          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">Published News Posts</h3>
-          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Active news items stored in Firestore with Cloudinary image URLs:</p>
-          <div id="admin-news-container" style="display: flex; flex-direction: column; gap: 1rem;">
-            <!-- Dynamically populated from Firestore -->
-          </div>
-        </div>
-      </div>
-
-      <!-- VIEW 6: DOWNLOADS & OFFICIAL DOCUMENTS PANE -->
-      <div class="tab-pane" id="pane-admin-downloads" style="display: none;">
-        <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
-          <div>
-            <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--primary); margin-bottom: 0.2rem;">
-              📄 Official Downloads & PDF Documents
-            </h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Upload official school documents, admission letter templates, student handbooks, and prospectuses.</p>
-          </div>
-          <button type="button" class="btn btn-outline btn-return-dash" style="padding: 0.5rem 1rem;">
-            ← Back to Dashboard
-          </button>
-        </div>
-
-        <div class="management-panel-card">
-          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem;">Upload Official Document (PDF)</h3>
-          <form id="doc-upload-form" novalidate>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
-              <div>
-                <label for="doc-title-input" class="form-label" style="font-weight: 600;">Document Name / Title</label>
-                <input type="text" id="doc-title-input" class="form-input" placeholder="e.g. Official Admission Letter Template 2026" required>
-              </div>
-              <div>
-                <label for="doc-type-select" class="form-label" style="font-weight: 600;">Document Category</label>
-                <select id="doc-type-select" class="form-select">
-                  <option value="Admission Letter">Admission Letter</option>
-                  <option value="Student Handbook">Student Handbook</option>
-                  <option value="School Prospectus">School Prospectus</option>
-                  <option value="Fee Structure">Fee Structure & Policy</option>
-                </select>
-              </div>
-            </div>
-
-            <div style="margin-bottom: 1.25rem;">
-              <label class="form-label" style="font-weight: 600;">PDF Document File (Cloudinary Raw Upload)</label>
-              <div class="upload-dropzone-box" id="dz-doc-file">
-                <p style="font-size: 0.9rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;">
-                  Click or Drag to Upload PDF File (Max 10 MB)
-                </p>
-                <span id="doc-file-label" style="font-size: 0.8rem; color: var(--text-muted);">No PDF selected</span>
-                <input type="file" id="input-doc-file" accept=".pdf,application/pdf" style="display: none;">
-              </div>
-
-              <!-- Progress Bar -->
-              <div id="doc-upload-progress" class="upload-progress-container">
-                <div class="upload-progress-bar-bg">
-                  <div id="doc-progress-bar-fill" class="upload-progress-bar-fill"></div>
-                </div>
-                <div id="doc-upload-status" class="upload-status-text">
-                  <span>Uploading PDF to Cloudinary...</span>
-                  <span id="doc-progress-percent">0%</span>
-                </div>
-              </div>
-            </div>
-
-            <div style="display: flex; justify-content: flex-end;">
-              <button type="submit" class="btn btn-primary" id="btn-upload-doc" style="font-weight: 700;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                Upload Document to Cloudinary
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <div class="management-panel-card">
-          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">Uploaded Documents & Downloads</h3>
-          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Available official PDFs stored in Cloudinary and registered in Firestore:</p>
-          <div id="admin-docs-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
-            <!-- Dynamically populated from Firestore -->
-          </div>
-        </div>
-      </div>
-
-      <!-- VIEW 3: GENERIC COMING SOON PANE FOR OTHER MODULES -->
-      <div class="tab-pane" id="pane-admin-cs" style="display: none;">
-        
-        <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
-          <div>
-            <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--primary); margin-bottom: 0.2rem;" id="cs-module-heading">
-              Module Title
-            </h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Stage 1 Control Center Preview</p>
-          </div>
-          <button type="button" class="btn btn-outline btn-return-dash" style="padding: 0.5rem 1rem;">
-            ← Back to Dashboard
-          </button>
-        </div>
-
-        <div class="management-panel-card" style="text-align: center; padding: 4.5rem 2rem;">
-          <div style="width: 76px; height: 76px; border-radius: 50%; background-color: #FEF3C7; color: #92400E; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto; border: 2px solid #FDE68A;">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-          </div>
-
-          <h3 style="font-size: 1.6rem; font-weight: 800; color: var(--primary); margin-bottom: 0.5rem;">
-            Module Coming Soon
-          </h3>
-
-          <p style="color: var(--text-dark); font-size: 0.95rem; max-width: 540px; margin: 0 auto 1.75rem auto; line-height: 1.6;">
-            The <strong id="cs-module-name-text" style="color: var(--primary);">Module</strong> control panel is fully prepared for future connection to Firebase Authentication, Firestore Database, and Firebase Storage in upcoming stages.
-          </p>
-
-          <button type="button" class="btn btn-primary btn-return-dash" style="padding: 0.75rem 1.75rem;">
-            Return to Master Dashboard
-          </button>
-        </div>
-
-      </div>
-
-      <!-- FUTURE FIREBASE PREPARATION CARD -->
-      <div style="margin-top: 2rem; background: linear-gradient(135deg, rgba(9, 33, 68, 0.05) 0%, rgba(212, 175, 55, 0.1) 100%); border: 1.5px solid rgba(212, 175, 55, 0.4); border-radius: var(--radius-lg); padding: 1.75rem; display: flex; align-items: flex-start; gap: 1.25rem; box-shadow: var(--shadow-sm);">
-        <div style="width: 52px; height: 52px; border-radius: var(--radius-md); background: #092144; color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: var(--shadow-sm);">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-        </div>
-        <div>
-          <h4 style="font-size: 1.15rem; font-weight: 800; color: var(--primary); margin-bottom: 0.35rem;">
-            Future Firebase Integration Preparation
-          </h4>
-          <p style="font-size: 0.875rem; color: var(--text-dark); margin-bottom: 0; line-height: 1.6;">
-            Every module in this Master Control Center is architected and structured for immediate pairing with <strong>Firebase Authentication</strong>, <strong>Firestore Realtime Database</strong> (for student rosters, admissions, results, staff files, timetables & news), and <strong>Firebase Storage</strong> (for logos, background banners, gallery photos & certificates).
-          </p>
-        </div>
-      </div>
-
     </main>
   </div>
 
-
-  <!-- TOAST CONTAINER -->
-  <div id="toast-container" class="toast-container"></div>
-
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="container footer-bottom" style="border-top: none; padding-top: 1.5rem; padding-bottom: 1.5rem;">
-      <p>&copy; 2026 His Grace School Agbugburu. All rights reserved.</p>
-      <p style="font-size: 0.75rem;">Administrator Portal Stage 1 (Master Control Center)</p>
-    </div>
-  </footer>
-
-  <!-- Page Script -->
+  <script type="module" src="js/firebase.js"></script>
+  <script type="module" src="js/session.js"></script>
+  <script type="module" src="js/auth.js"></script>
+  <script type="module" src="js/database.js"></script>
   <script type="module" src="js/admin-portal.js"></script>
 </body>
 </html>

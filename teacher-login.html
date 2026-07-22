@@ -3,385 +3,332 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teacher Portal Login | His Grace School Agbugburu</title>
+  <title>Teacher Portal Access | His Grace School Agbugburu</title>
   
-  <!-- SEO & Meta Description -->
-  <meta name="description" content="Access the official His Grace School Agbugburu Teacher Portal to manage assigned classes, student attendance, assessment results, lesson notes, and timetables.">
+  <meta name="description" content="Teacher Portal Login for His Grace School Agbugburu staff members.">
   
-  <!-- CSS Stylesheets -->
   <link rel="stylesheet" href="css/style.css">
 
   <style>
-    /* Custom Styling for Teacher Login Page */
-    .login-wrapper-section {
-      min-height: calc(100vh - var(--header-height) - 200px);
+    .teacher-login-body {
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 3rem 1rem;
-      background-color: var(--secondary-bg);
-      background-image: radial-gradient(circle at 10% 20%, rgba(18, 62, 124, 0.04) 0%, transparent 60%),
-                        radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 60%);
+      padding: 2rem 1rem;
+      background-color: #0F172A;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(18, 62, 124, 0.4) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(212, 175, 55, 0.2) 0px, transparent 50%);
+      font-family: 'Poppins', sans-serif;
     }
 
-    .login-card {
-      background: var(--white);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-lg);
-      border: 1px solid var(--border);
+    .teacher-login-card {
+      background: #FFFFFF;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
       width: 100%;
-      max-width: 480px;
+      max-width: 460px;
       overflow: hidden;
       position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .login-card::before {
+    .teacher-login-card::before {
       content: '';
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
-      height: 5px;
-      background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+      height: 6px;
+      background: linear-gradient(90deg, #123E7C 0%, #D4AF37 50%, #123E7C 100%);
     }
 
-    .login-card-header {
-      padding: 2.25rem 2.25rem 1.5rem 2.25rem;
+    .teacher-card-header {
+      padding: 2.5rem 2.25rem 1.75rem 2.25rem;
       text-align: center;
-      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%);
+      border-bottom: 1px solid #F1F5F9;
     }
 
-    .login-crest-avatar {
-      width: 72px;
-      height: 72px;
+    .teacher-crest-wrapper {
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
-      border: 2px solid var(--accent);
-      padding: 3px;
-      background: var(--white);
-      margin: 0 auto 1rem auto;
-      box-shadow: var(--shadow-sm);
+      border: 2px solid #D4AF37;
+      padding: 4px;
+      background: #FFFFFF;
+      margin: 0 auto 1.25rem auto;
+      box-shadow: 0 8px 20px rgba(18, 62, 124, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .login-crest-avatar img {
+    .teacher-crest-img {
       width: 100%;
       height: 100%;
       object-fit: contain;
       border-radius: 50%;
     }
 
-    .login-card-header h1 {
-      font-size: 1.6rem;
+    .teacher-school-name {
+      font-size: 0.85rem;
       font-weight: 700;
-      color: var(--primary);
+      color: #D4AF37;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 0.35rem;
+    }
+
+    .teacher-portal-title {
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: #123E7C;
       margin-bottom: 0.25rem;
+      letter-spacing: -0.02em;
     }
 
-    .login-card-header p {
+    .teacher-portal-sub {
       font-size: 0.875rem;
-      color: var(--text-muted);
-      margin-bottom: 0;
+      color: #64748B;
+      font-weight: 400;
     }
 
-    .login-card-body {
+    .teacher-card-body {
       padding: 2.25rem;
     }
 
-    /* Demo Helper Callout Box */
-    .demo-credentials-callout {
-      background: rgba(18, 62, 124, 0.04);
-      border: 1px dashed rgba(18, 62, 124, 0.25);
-      border-radius: var(--radius-md);
-      padding: 0.85rem 1rem;
-      margin-bottom: 1.5rem;
-      font-size: 0.825rem;
-      color: var(--primary);
-      display: flex;
-      align-items: flex-start;
-      gap: 0.65rem;
+    .form-group {
+      margin-bottom: 1.35rem;
     }
 
-    .demo-credentials-callout code {
-      background: rgba(255, 255, 255, 0.8);
-      padding: 0.15rem 0.4rem;
-      border-radius: var(--radius-sm);
-      font-family: monospace;
-      font-weight: 700;
-      border: 1px solid var(--border);
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #1E293B;
+      margin-bottom: 0.5rem;
     }
 
-    .login-options-row {
+    .input-icon-wrapper {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748B;
+      pointer-events: none;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.85rem 1rem 0.85rem 2.85rem;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.925rem;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 10px;
+      color: #0F172A;
+      background-color: #F8FAFC;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-sizing: border-box;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #123E7C;
+      background-color: #FFFFFF;
+      box-shadow: 0 0 0 4px rgba(18, 62, 124, 0.1);
+    }
+
+    .form-row-options {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 1.75rem;
-      font-size: 0.875rem;
+      font-size: 0.85rem;
     }
 
-    .forgot-link {
-      color: var(--primary);
+    .remember-me-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #475569;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .remember-me-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: #123E7C;
+      cursor: pointer;
+    }
+
+    .forgot-pass-btn {
+      color: #123E7C;
       font-weight: 600;
       text-decoration: none;
-      transition: var(--transition-fast);
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
     }
 
-    .forgot-link:hover {
-      color: var(--accent);
+    .forgot-pass-btn:hover {
+      color: #D4AF37;
       text-decoration: underline;
     }
 
-    .login-btn-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.85rem;
-    }
-
-    /* Forgot Password Modal */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background-color: rgba(9, 33, 68, 0.8);
-      backdrop-filter: blur(6px);
-      z-index: 1200;
+    .btn-submit-teacher {
+      width: 100%;
+      padding: 0.95rem;
+      background: #123E7C;
+      color: #FFFFFF;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 0.975rem;
+      letter-spacing: 0.5px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 8px 20px rgba(18, 62, 124, 0.25);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 1.5rem;
-      opacity: 0;
-      visibility: hidden;
-      transition: var(--transition-fast);
+      gap: 0.5rem;
     }
 
-    .modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
+    .btn-submit-teacher:hover {
+      background: #0A2852;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(18, 62, 124, 0.35);
     }
 
-    .modal-card {
-      background: var(--white);
-      width: 100%;
-      max-width: 480px;
-      border-radius: var(--radius-lg);
-      padding: 2.25rem;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-      border: 1px solid var(--border);
+    .teacher-footer-link {
       text-align: center;
-      transform: translateY(20px) scale(0.95);
-      transition: var(--transition-smooth);
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid #F1F5F9;
+      font-size: 0.825rem;
+      color: #64748B;
     }
 
-    .modal-overlay.active .modal-card {
-      transform: translateY(0) scale(1);
+    .teacher-footer-link a {
+      color: #123E7C;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .teacher-footer-link a:hover {
+      color: #D4AF37;
+    }
+
+    .form-alert-box {
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+      display: none;
+    }
+
+    .form-alert-box.error {
+      background: #FEE2E2;
+      color: #991B1B;
+      border: 1px solid #FCA5A5;
+    }
+
+    .form-alert-box.success {
+      background: #D1FAE5;
+      color: #065F46;
+      border: 1px solid #6EE7B7;
     }
   </style>
 </head>
-<body>
+<body class="teacher-login-body">
 
-  <!-- ========================================================= -->
-  <!-- HEADER & NAVIGATION                                       -->
-  <!-- ========================================================= -->
-  <header id="header" class="header">
-    <div class="container header-container">
-      <!-- Logo Block -->
-      <a href="index.html#/home" class="logo-link" id="logo-nav-link">
-        <div class="logo-img-wrapper">
-          <img src="/src/assets/images/school_crest_logo_1784645340046.jpg" alt="His Grace School Agbugburu Logo" class="logo-img" referrerPolicy="no-referrer">
-        </div>
-        <div class="logo-text">
-          <span class="logo-title">His Grace School</span>
-          <span class="logo-subtitle">Agbugburu</span>
-        </div>
-      </a>
-
-      <!-- Desktop Navigation Menu -->
-      <ul class="nav-menu" id="nav-menu">
-        <li><a href="index.html#/home" class="nav-link">Home</a></li>
-        <li><a href="index.html#/about" class="nav-link">About Us</a></li>
-        <li><a href="index.html#/admission" class="nav-link">Admission</a></li>
-        <li><a href="index.html#/gallery" class="nav-link">Gallery</a></li>
-        <li><a href="index.html#/contact" class="nav-link">Contact Us</a></li>
-        
-        <!-- Portal Dropdown -->
-        <li class="dropdown active" id="portal-dropdown">
-          <a href="index.html#/portals" class="nav-link dropdown-toggle">
-            Portals
-            <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </a>
-          <ul class="dropdown-menu">
-            <li class="dropdown-item"><a href="applicant-login.html" class="dropdown-link">Applicant Portal</a></li>
-            <li class="dropdown-item"><a href="student-login.html" class="dropdown-link">Student Portal</a></li>
-            <li class="dropdown-item"><a href="teacher-login.html" class="dropdown-link active">Teacher Portal</a></li>
-            <li class="dropdown-item"><a href="admin-login.html" class="dropdown-link">Administrator Portal</a></li>
-          </ul>
-        </li>
-      </ul>
-
-      <!-- Mobile Toggle -->
-      <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+  <div class="teacher-login-card">
+    <div class="teacher-card-header">
+      <div class="teacher-crest-wrapper">
+        <img src="assets/images/logo.png" alt="His Grace School Crest" class="teacher-crest-img">
+      </div>
+      <div class="teacher-school-name">His Grace School Agbugburu</div>
+      <h1 class="teacher-portal-title">Teacher Portal</h1>
+      <p class="teacher-portal-sub">Academic & Class Management System</p>
     </div>
-  </header>
 
-  <!-- ========================================================= -->
-  <!-- MAIN CONTENT: TEACHER LOGIN SECTION                       -->
-  <!-- ========================================================= -->
-  <main class="page-view active" style="margin-top: var(--header-height);">
-    <section class="login-wrapper-section">
-      
-      <div class="login-card">
-        <!-- Header -->
-        <div class="login-card-header">
-          <div class="login-crest-avatar">
-            <img src="/src/assets/images/school_crest_logo_1784645340046.jpg" alt="His Grace School Crest" referrerPolicy="no-referrer">
+    <div class="teacher-card-body">
+      <div id="teacher-login-alert" class="form-alert-box"></div>
+
+      <form id="teacher-login-form" autocomplete="off">
+        <div class="form-group">
+          <label for="staff-id" class="form-label">Staff ID</label>
+          <div class="input-icon-wrapper">
+            <input 
+              type="text" 
+              id="staff-id" 
+              class="form-input" 
+              placeholder="e.g. HGS/STAFF/001" 
+              required
+              style="font-family: monospace; font-weight: 600; letter-spacing: 0.5px;"
+            >
+            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <line x1="20" y1="8" x2="20" y2="14"></line>
+              <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
           </div>
-          <h1>Teacher Portal Login</h1>
-          <p>Sign in with your Staff ID to manage classes, results & lesson plans</p>
         </div>
 
-        <!-- Form Body -->
-        <div class="login-card-body">
-          
-          <!-- Demo Notice Callout -->
-          <div class="demo-credentials-callout">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-            <div>
-              <strong>Demo Credentials Pre-filled:</strong><br>
-              Staff ID: <code>HGS-TCH-2045</code> | Password: <code>teacher123</code>
-            </div>
+        <div class="form-group">
+          <label for="teacher-password" class="form-label">Password</label>
+          <div class="input-icon-wrapper">
+            <input 
+              type="password" 
+              id="teacher-password" 
+              class="form-input" 
+              placeholder="Enter your password" 
+              required
+            >
+            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
           </div>
-
-          <!-- Form -->
-          <form id="teacher-login-form" novalidate>
-            
-            <!-- Staff ID -->
-            <div class="form-group" style="margin-bottom: 1.25rem;">
-              <label for="staff-id" class="form-label" style="font-weight: 600;">
-                Staff ID <span style="color: #EF4444;">*</span>
-              </label>
-              <div style="position: relative;">
-                <input 
-                  type="text" 
-                  id="staff-id" 
-                  class="form-input" 
-                  placeholder="e.g., HGS-TCH-2045" 
-                  value="HGS-TCH-2045"
-                  style="padding-left: 2.75rem; font-family: monospace; font-weight: 600;" 
-                  required
-                >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);">
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="8.5" cy="7" r="4"></circle>
-                  <polyline points="17 11 19 13 23 9"></polyline>
-                </svg>
-              </div>
-              <span class="error-msg" id="staff-id-error" style="display: none; color: #EF4444; font-size: 0.8rem; margin-top: 0.25rem;">Please enter your official Staff ID.</span>
-            </div>
-
-            <!-- Password -->
-            <div class="form-group" style="margin-bottom: 1.25rem;">
-              <label for="teacher-password" class="form-label" style="font-weight: 600;">
-                Password <span style="color: #EF4444;">*</span>
-              </label>
-              <div style="position: relative;">
-                <input 
-                  type="password" 
-                  id="teacher-password" 
-                  class="form-input" 
-                  placeholder="Enter your password" 
-                  value="teacher123"
-                  style="padding-left: 2.75rem;" 
-                  required
-                >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
-              </div>
-              <span class="error-msg" id="teacher-password-error" style="display: none; color: #EF4444; font-size: 0.8rem; margin-top: 0.25rem;">Please enter your password.</span>
-            </div>
-
-            <!-- Options: Remember Me & Forgot Password -->
-            <div class="login-options-row">
-              <label style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-dark); font-weight: 500;">
-                <input type="checkbox" id="remember-me" checked style="accent-color: var(--primary); width: 16px; height: 16px;">
-                Remember Me
-              </label>
-              <a href="#" class="forgot-link" id="btn-forgot-password">Forgot Password?</a>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="login-btn-group">
-              <button type="submit" class="btn btn-primary" id="btn-login-submit" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 1rem; font-weight: 700;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
-                Sign In to Teacher Portal
-              </button>
-
-              <a href="index.html#/home" class="btn btn-outline" style="width: 100%; justify-content: center; padding: 0.75rem; font-size: 0.9rem;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                Back to Home
-              </a>
-            </div>
-
-          </form>
-
         </div>
-      </div>
 
-    </section>
-  </main>
+        <div class="form-row-options">
+          <label class="remember-me-label">
+            <input type="checkbox" id="teacher-remember" checked>
+            Remember session
+          </label>
+          <button type="button" id="btn-forgot-password" class="forgot-pass-btn">Need Help?</button>
+        </div>
 
-
-  <!-- ========================================================= -->
-  <!-- FORGOT PASSWORD MODAL                                     -->
-  <!-- ========================================================= -->
-  <div class="modal-overlay" id="forgot-password-modal">
-    <div class="modal-card">
-      <div style="width: 56px; height: 56px; border-radius: 50%; background-color: rgba(212, 175, 55, 0.15); color: #B48811; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; border: 1.5px solid var(--accent);">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-      </div>
-      
-      <h3 style="color: var(--primary); font-size: 1.35rem; font-weight: 700; margin-bottom: 0.5rem;">
-        Staff Password Reset
-      </h3>
-      
-      <p style="color: var(--text-dark); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem;">
-        Enter your official Staff ID to request password recovery or reset credentials from the IT Administrator.
-      </p>
-
-      <div style="margin-bottom: 1.5rem; text-align: left;">
-        <label for="reset-staff-id" class="form-label" style="font-weight: 600;">Staff ID</label>
-        <input type="text" id="reset-staff-id" class="form-input" placeholder="e.g., HGS-TCH-2045" value="HGS-TCH-2045" style="font-family: monospace;">
-      </div>
-
-      <div style="display: flex; gap: 0.85rem; justify-content: center;">
-        <button type="button" class="btn btn-outline" id="btn-close-modal" style="padding: 0.65rem 1.25rem;">
-          Cancel
+        <button type="submit" id="btn-teacher-submit" class="btn-submit-teacher">
+          <span>Login to Portal</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
         </button>
-        <button type="button" class="btn btn-primary" id="btn-send-reset" style="padding: 0.65rem 1.5rem;">
-          Send Request
-        </button>
+      </form>
+
+      <div class="teacher-footer-link">
+        <a href="index.html">&larr; Return to Main Website</a>
       </div>
     </div>
   </div>
 
-
-  <!-- TOAST CONTAINER -->
-  <div id="toast-container" class="toast-container"></div>
-
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="container footer-bottom" style="border-top: none; padding-top: 1.5rem; padding-bottom: 1.5rem;">
-      <p>&copy; 2026 His Grace School Agbugburu. All rights reserved.</p>
-      <p style="font-size: 0.75rem;">Teacher Portal Stage 1</p>
-    </div>
-  </footer>
-
-  <!-- Page Script -->
+  <script type="module" src="js/firebase.js"></script>
+  <script type="module" src="js/session.js"></script>
+  <script type="module" src="js/auth.js"></script>
   <script type="module" src="js/teacher-login.js"></script>
 </body>
 </html>

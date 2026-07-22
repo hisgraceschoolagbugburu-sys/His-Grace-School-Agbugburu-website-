@@ -1,185 +1,134 @@
 /**
  * HIS GRACE SCHOOL AGBUGBURU
- * Teacher Portal Dashboard Script (Stage 1)
- * Handles tab navigation, module views, quick actions, coming soon overlays,
- * and session logout handler.
+ * Teacher Portal Controller
  */
 
-document.addEventListener('DOMContentLoaded', () => {
-  // DOM Elements
-  const header = document.getElementById('header');
-  const mobileToggle = document.getElementById('mobile-toggle');
-  const navMenu = document.getElementById('nav-menu');
-  const portalDropdown = document.getElementById('portal-dropdown');
-  const toastContainer = document.getElementById('toast-container');
+import { HGS_SESSION } from './session.js';
+import { HGS_AUTH } from './auth.js';
 
-  const sidebarButtons = document.querySelectorAll('.sidebar-item-btn[data-tab]');
-  const sidebarLogoutBtn = document.getElementById('sidebar-logout-btn');
-
-  const paneDashboard = document.getElementById('pane-dashboard');
-  const paneProfile = document.getElementById('pane-profile');
-  const paneAnnouncements = document.getElementById('pane-announcements');
-  const paneComingSoon = document.getElementById('pane-coming-soon');
-
-  const csPaneTitle = document.getElementById('cs-pane-title');
-  const csFeatureName = document.getElementById('cs-feature-name');
-  const backDashboardBtns = document.querySelectorAll('.btn-back-dashboard');
-
-  const qaMyProfile = document.getElementById('qa-my-profile');
-  const qaMyTimetable = document.getElementById('qa-my-timetable');
-  const qaStudentResults = document.getElementById('qa-student-results');
-  const qaAttendance = document.getElementById('qa-attendance');
-  const qaLogout = document.getElementById('qa-logout');
-
-  const moduleCards = document.querySelectorAll('.module-card');
-
-  // Sticky Header
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
-    }
-  });
-
-  // Mobile Drawer Toggle
-  if (mobileToggle && navMenu) {
-    mobileToggle.addEventListener('click', () => {
-      mobileToggle.classList.toggle('active');
-      navMenu.classList.toggle('active');
-    });
+document.addEventListener('DOMContentLoaded', async () => {
+  // 1. Verify Authentication Security
+  const currentUser = HGS_SESSION.getCurrentUser();
+  if (!currentUser || currentUser.role !== 'teacher') {
+    window.location.href = 'teacher-login.html';
+    return;
   }
 
-  // Mobile Portal Dropdown
-  if (portalDropdown) {
-    const portalToggle = portalDropdown.querySelector('.dropdown-toggle');
-    if (portalToggle) {
-      portalToggle.addEventListener('click', (e) => {
-        if (window.innerWidth <= 768) {
-          e.preventDefault();
-          portalDropdown.classList.toggle('active');
-        }
-      });
-    }
-  }
+  // Header Info
+  const tchNameEl = document.getElementById('tch-user-name');
+  const tchIdEl = document.getElementById('tch-user-id');
+  const badgeClassEl = document.getElementById('badge-teacher-class');
 
-  // Toast Function
-  const showToast = (message) => {
-    if (!toastContainer) return;
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.innerHTML = `<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg><span>${message}</span>`;
-    toastContainer.appendChild(toast);
+  if (tchNameEl) tchNameEl.textContent = currentUser.fullName || currentUser.displayName || 'Mr. Emmanuel Adebayo';
+  if (tchIdEl) tchIdEl.textContent = currentUser.staffId || 'HGS/STAFF/001';
+  if (badgeClassEl) badgeClassEl.textContent = `Assigned: ${currentUser.assignedClass || 'Primary 5 Gold'}`;
 
-    setTimeout(() => toast.classList.add('show'), 10);
-    setTimeout(() => {
-      toast.classList.remove('show');
-      setTimeout(() => toast.remove(), 400);
-    }, 3500);
+  // 2. Navigation Tabs
+  const navButtons = document.querySelectorAll('.tch-nav-item button');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+  const panelTitle = document.getElementById('tch-panel-title');
+  const panelSubtitle = document.getElementById('tch-panel-subtitle');
+
+  const tabTitles = {
+    dashboard: { title: 'Teacher Dashboard', sub: 'Class Overview & Daily Teaching Schedule' },
+    attendance: { title: 'Daily Attendance Register', sub: 'Record & Monitor Student Class Attendance' },
+    students: { title: 'Assigned Class Roster', sub: 'Student Profiles & Guardian Contact Directory' },
+    results: { title: 'Result & Grade Upload', sub: 'Input Continuous Assessment & Examination Scores' },
+    classes: { title: 'Class Management', sub: 'Subject Syllabus & Parent Announcements' },
+    timetable: { title: 'Weekly Timetable', sub: 'Subject Schedule Grid' }
   };
 
-  // Function to switch active view pane
-  const switchPane = (targetTab, featureName = '') => {
-    // Hide all panes
-    if (paneDashboard) paneDashboard.style.display = 'none';
-    if (paneProfile) paneProfile.style.display = 'none';
-    if (paneAnnouncements) paneAnnouncements.style.display = 'none';
-    if (paneComingSoon) paneComingSoon.style.display = 'none';
-
-    // Update sidebar active buttons
-    sidebarButtons.forEach(btn => {
-      if (btn.getAttribute('data-tab') === targetTab) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
-    });
-
-    // Show appropriate pane
-    if (targetTab === 'dashboard') {
-      if (paneDashboard) paneDashboard.style.display = 'block';
-    } else if (targetTab === 'profile') {
-      if (paneProfile) paneProfile.style.display = 'block';
-    } else if (targetTab === 'announcements') {
-      if (paneAnnouncements) paneAnnouncements.style.display = 'block';
-    } else {
-      // Coming soon pane for other tabs
-      const title = featureName || getFeatureTitle(targetTab);
-      if (csPaneTitle) csPaneTitle.textContent = title;
-      if (csFeatureName) csFeatureName.textContent = title;
-      if (paneComingSoon) paneComingSoon.style.display = 'block';
-    }
-
-    // Scroll to top of main content
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Helper map for feature titles
-  const getFeatureTitle = (key) => {
-    const titles = {
-      classes: 'My Classes & Subject Rosters',
-      attendance: 'Student Attendance Register',
-      results: 'Student Assessment Results',
-      assignments: 'Homework & Assignments',
-      'lesson-notes': 'Weekly Lesson Notes',
-      timetable: 'Teaching & Exam Timetable',
-      messages: 'Internal Staff Messages',
-      downloads: 'Staff Resource Downloads'
-    };
-    return titles[key] || 'Teacher Module';
-  };
-
-  // Sidebar Buttons Click Handler
-  sidebarButtons.forEach(btn => {
+  navButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
-      const tab = btn.getAttribute('data-tab');
-      switchPane(tab);
-    });
-  });
+      const targetTab = btn.getAttribute('data-tab');
 
-  // Back to Dashboard Buttons
-  backDashboardBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      switchPane('dashboard');
-    });
-  });
+      navButtons.forEach(b => b.parentElement.classList.remove('active'));
+      btn.parentElement.classList.add('active');
 
-  // Module Cards Click Handlers
-  moduleCards.forEach(card => {
-    card.addEventListener('click', () => {
-      const action = card.getAttribute('data-action');
-      if (action) {
-        switchPane(action);
+      tabPanels.forEach(p => p.classList.remove('active'));
+      const targetPanel = document.getElementById(`panel-${targetTab}`);
+      if (targetPanel) targetPanel.classList.add('active');
+
+      if (tabTitles[targetTab]) {
+        if (panelTitle) panelTitle.textContent = tabTitles[targetTab].title;
+        if (panelSubtitle) panelSubtitle.textContent = tabTitles[targetTab].sub;
       }
     });
   });
 
-  // Quick Action Buttons Handlers
-  if (qaMyProfile) {
-    qaMyProfile.addEventListener('click', () => switchPane('profile'));
+  // 3. Logout
+  const btnLogout = document.getElementById('btn-tch-logout');
+  if (btnLogout) {
+    btnLogout.addEventListener('click', async () => {
+      await HGS_AUTH.logoutUser();
+      localStorage.removeItem('hgs_teacher_logged_in');
+      window.location.href = 'teacher-login.html';
+    });
   }
 
-  if (qaMyTimetable) {
-    qaMyTimetable.addEventListener('click', () => switchPane('timetable', 'Teaching & Exam Timetable'));
-  }
+  // 4. Sample Students for Attendance & Roster
+  const sampleRoster = [
+    { id: 'HGS/2026/001', name: 'Oluwaseun Adebayo', gender: 'Male', phone: '08023456789' },
+    { id: 'HGS/2026/002', name: 'Chinedu Okonkwo', gender: 'Male', phone: '08034567890' },
+    { id: 'HGS/2026/003', name: 'Miriam Eze', gender: 'Female', phone: '08045678901' },
+    { id: 'HGS/2026/004', name: 'Kenechukwu Nnamdi', gender: 'Male', phone: '08056789012' }
+  ];
 
-  if (qaStudentResults) {
-    qaStudentResults.addEventListener('click', () => switchPane('results', 'Student Assessment Results'));
-  }
+  // Render Attendance List
+  const renderAttendance = () => {
+    const tableAttendance = document.getElementById('table-attendance-list');
+    if (!tableAttendance) return;
 
-  if (qaAttendance) {
-    qaAttendance.addEventListener('click', () => switchPane('attendance', 'Student Attendance Register'));
-  }
-
-  // Logout Handler (returns to homepage)
-  const handleLogout = () => {
-    showToast('Logging out of Teacher Portal...');
-    localStorage.removeItem('hgs_teacher_logged_in');
-    setTimeout(() => {
-      window.location.href = 'index.html#/home';
-    }, 1000);
+    tableAttendance.innerHTML = sampleRoster.map(s => `
+      <tr>
+        <td style="font-family: monospace; font-weight: 700; color: var(--tch-primary);">${s.id}</td>
+        <td style="font-weight: 600;">${s.name}</td>
+        <td>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn-att present active" onclick="this.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('active')); this.classList.add('active');">Present</button>
+            <button class="btn-att absent" onclick="this.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('active')); this.classList.add('active');">Absent</button>
+            <button class="btn-att late" onclick="this.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('active')); this.classList.add('active');">Late</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
   };
 
-  if (qaLogout) qaLogout.addEventListener('click', handleLogout);
-  if (sidebarLogoutBtn) sidebarLogoutBtn.addEventListener('click', handleLogout);
+  // Render Student Roster
+  const renderRoster = () => {
+    const tableRoster = document.getElementById('table-tch-students');
+    if (!tableRoster) return;
+
+    tableRoster.innerHTML = sampleRoster.map(s => `
+      <tr>
+        <td style="font-family: monospace; font-weight: 700; color: var(--tch-primary);">${s.id}</td>
+        <td style="font-weight: 600;">${s.name}</td>
+        <td>${s.gender}</td>
+        <td>${s.phone}</td>
+      </tr>
+    `).join('');
+  };
+
+  renderAttendance();
+  renderRoster();
+
+  // Handle Result Upload Submission
+  const resultForm = document.getElementById('form-upload-result');
+  if (resultForm) {
+    resultForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const ca = parseInt(document.getElementById('result-ca').value || '0', 10);
+      const exam = parseInt(document.getElementById('result-exam').value || '0', 10);
+      const total = ca + exam;
+
+      let grade = 'F';
+      if (total >= 70) grade = 'A';
+      else if (total >= 60) grade = 'B';
+      else if (total >= 50) grade = 'C';
+      else if (total >= 45) grade = 'D';
+
+      alert(`Grade computed successfully!\nTotal Score: ${total}/100\nGrade: ${grade}\nResult record saved.`);
+      resultForm.reset();
+    });
+  }
 });
