@@ -11,7 +11,7 @@ import {
   signOut,
   sendPasswordResetEmail
 } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
 (function (global) {
   'use strict';
@@ -138,6 +138,137 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
         success: true,
         user: userProfile
       };
+    },
+
+    /**
+     * Authenticates Administrator using Administrator ID & Password only.
+     * Verifies Firestore administrators collection & account status ('Active').
+     * @param {string} adminIdInput - e.g. 'HGS/ADMIN/001'
+     * @param {string} passwordInput - e.g. 'Admin001'
+     * @returns {Promise<Object>} Promise resolving to authenticated administrator profile
+     */
+    loginAdministrator: async function (adminIdInput, passwordInput) {
+      const cleanAdminId = (adminIdInput || '').trim();
+      const password = (passwordInput || '').trim();
+
+      if (!cleanAdminId) {
+        throw new Error("Invalid Administrator ID.");
+      }
+
+      if (!password) {
+        throw new Error("Incorrect Password.");
+      }
+
+      // Standardize format: HGS/ADMIN/001 or HGS-ADMIN-001 or ADMIN
+      let normalizedId = cleanAdminId.toUpperCase();
+      if (normalizedId === 'ADMIN' || normalizedId === 'HGS-ADMIN-001' || normalizedId === 'HGS_ADMIN_001') {
+        normalizedId = 'HGS/ADMIN/001';
+      }
+
+      // 1. Check or Seed Master Administrator in Firestore
+      const docRef = doc(db, 'administrators', 'HGS_ADMIN_001');
+      let adminSnap = await getDoc(docRef);
+
+      if (!adminSnap.exists() && normalizedId === 'HGS/ADMIN/001') {
+        const masterAdminData = {
+          adminId: 'HGS/ADMIN/001',
+          fullName: 'Dr. Gabriel Okonjo',
+          role: ROLES.ADMINISTRATOR,
+          status: 'Active',
+          email: 'hisgraceschoolagbugburu@gmail.com',
+          createdAt: new Date().toISOString()
+        };
+        await setDoc(docRef, masterAdminData);
+        adminSnap = await getDoc(docRef);
+      }
+
+      let adminData = null;
+      if (adminSnap.exists() && (adminSnap.data().adminId?.toUpperCase() === normalizedId || normalizedId === 'HGS/ADMIN/001')) {
+        adminData = adminSnap.data();
+      } else {
+        // Query administrators collection by adminId
+        const q = query(collection(db, 'administrators'), where('adminId', '==', cleanAdminId));
+        const querySnap = await getDocs(q);
+        if (!querySnap.empty) {
+          adminData = querySnap.docs[0].data();
+        }
+      }
+
+      if (!adminData) {
+        throw new Error("Invalid Administrator ID.");
+      }
+
+      // 2. Check Account Status
+      if ((adminData.status || '').toLowerCase() !== 'active') {
+        throw new Error("Administrator account has been disabled.");
+      }
+
+      // 3. Password Verification & Firebase Auth Pairing
+      const adminAuthEmail = adminData.email || 'hisgraceschoolagbugburu@gmail.com';
+      let firebaseUser = null;
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, adminAuthEmail, password);
+        firebaseUser = userCredential.user;
+      } catch (authErr) {
+        // If account doesn't exist in Auth yet and password is default or valid, create account in Firebase Auth
+        if ((authErr.code === 'auth/user-not-found' || authErr.code === 'auth/invalid-credential') && (password === 'Admin001' || password === 'admin123')) {
+          try {
+            const newCred = await createUserWithEmailAndPassword(auth, adminAuthEmail, password);
+            firebaseUser = newCred.user;
+          } catch (createErr) {
+            throw new Error("Incorrect Password.");
+          }
+        } else {
+          throw new Error("Incorrect Password.");
+        }
+      }
+
+      // 4. Construct Secure Session Object
+      const adminProfile = {
+        uid: firebaseUser ? firebaseUser.uid : 'admin_hgs001',
+        adminId: adminData.adminId || 'HGS/ADMIN/001',
+        fullName: adminData.fullName || 'Dr. Gabriel Okonjo',
+        displayName: adminData.fullName || 'Dr. Gabriel Okonjo',
+        role: ROLES.ADMINISTRATOR,
+        status: adminData.status || 'Active',
+        email: adminAuthEmail,
+        createdAt: adminData.createdAt || new Date().toISOString()
+      };
+
+      // 5. Save Session
+      if (global.HGS_SESSION && typeof global.HGS_SESSION.saveSession === 'function') {
+        global.HGS_SESSION.saveSession(adminProfile);
+      }
+      localStorage.setItem('hgs_admin_logged_in', 'true');
+
+      return {
+        success: true,
+        user: adminProfile
+      };
+    },
+
+    /**
+     * Submits Administrator Password Reset Request to Firestore.
+     * Forwarded exclusively to school owner (hisgraceschoolagbugburu@gmail.com).
+     * @param {string} adminIdInput
+     * @returns {Promise<string>} Success message
+     */
+    requestAdminPasswordReset: async function (adminIdInput) {
+      const cleanAdminId = (adminIdInput || '').trim();
+      if (!cleanAdminId) {
+        throw new Error("Please provide your Administrator ID.");
+      }
+
+      const resetDocId = `reset_${cleanAdminId.replace(/[^a-zA-Z0-9]/g, '_')}_${Date.now()}`;
+      await setDoc(doc(db, 'admin_reset_requests', resetDocId), {
+        adminId: cleanAdminId,
+        forwardedTo: 'hisgraceschoolagbugburu@gmail.com',
+        status: 'Pending School Administration Approval',
+        requestedAt: new Date().toISOString()
+      });
+
+      return "Your password reset request has been received and forwarded to the official school administration for verification. You will be contacted after approval.";
     },
 
     /**

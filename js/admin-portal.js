@@ -1,11 +1,18 @@
 /**
  * HIS GRACE SCHOOL AGBUGBURU
- * Administrator Portal Dashboard Script (Stage 1)
+ * Administrator Portal Dashboard Script
  * Controls Master Control Center tab views, homepage management, quick actions,
- * coming soon overlays, file dropzones, and session logout.
+ * coming soon overlays, file dropzones, and session authentication / logout.
  */
 
+import { HGS_SESSION } from './session.js';
+import { HGS_AUTH } from './auth.js';
+
 document.addEventListener('DOMContentLoaded', () => {
+  // 1. Session Guard Check - Ensure active Administrator session exists
+  const currentUser = HGS_SESSION.requireAuthentication(['administrator'], 'admin-login.html');
+  if (!currentUser) return;
+
   // DOM Elements
   const header = document.getElementById('header');
   const mobileToggle = document.getElementById('mobile-toggle');
@@ -40,6 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const dzHeroBg = document.getElementById('dz-hero-bg');
   const inputLogoFile = document.getElementById('input-logo-file');
   const inputHeroFile = document.getElementById('input-hero-file');
+
+  // Update Welcome Banner User Info if element exists
+  const adminDisplayNameEl = document.getElementById('admin-display-name');
+  if (adminDisplayNameEl && currentUser.fullName) {
+    adminDisplayNameEl.textContent = currentUser.fullName;
+  }
 
   // Sticky Header
   window.addEventListener('scroll', () => {
@@ -207,13 +220,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Logout Handler (returns to homepage index.html#/home)
-  const handleAdminLogout = () => {
+  // Logout Handler (destroys Administrator session and redirects to index.html)
+  const handleAdminLogout = async (e) => {
+    if (e) e.preventDefault();
     showToast('Signing out of Master Control Center...');
+    try {
+      await HGS_AUTH.logoutUser();
+    } catch (err) {
+      console.warn('Logout error:', err);
+    }
     localStorage.removeItem('hgs_admin_logged_in');
     setTimeout(() => {
-      window.location.href = 'index.html#/home';
-    }, 1000);
+      window.location.href = 'index.html';
+    }, 800);
   };
 
   if (qaAdminLogout) qaAdminLogout.addEventListener('click', handleAdminLogout);
