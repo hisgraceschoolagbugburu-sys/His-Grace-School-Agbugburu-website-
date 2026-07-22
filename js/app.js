@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     email: "hisgraceschoolagbugburu@gmail.com",
     phones: ["09034014865", "08068045866"],
     defaultRoute: 'home',
-    routes: ['home', 'about', 'admission', 'gallery', 'contact']
+    routes: ['home', 'about', 'admission', 'gallery', 'contact', 'portals']
   };
 
   // --- DOM ELEMENTS ---
