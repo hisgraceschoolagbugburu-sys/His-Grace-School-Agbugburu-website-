@@ -15,16 +15,50 @@ export const firebaseConfig = {
   projectId: "his-grace-school-agbugburu-1",
   storageBucket: "his-grace-school-agbugburu-1.firebasestorage.app",
   messagingSenderId: "25103292992",
-  appId: "1:25103292992:web:2daf78000423a063611da5"
+  appId: "1:25103292992:web:8f84ece756c85e11611da5"
 };
 
-// Initialize Firebase App
-export const app = initializeApp(firebaseConfig);
+let app = null;
+let auth = null;
+let db = null;
+let storage = null;
 
-// Initialize Firebase Services
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+try {
+  // Initialize Firebase App
+  app = initializeApp(firebaseConfig);
+
+  // Initialize Firebase Services
+  auth = getAuth(app);
+  db = getFirestore(app);
+  storage = getStorage(app);
+
+  if (typeof window !== "undefined") {
+    window.firebaseApp = app;
+    window.firebaseAuth = auth;
+    window.firebaseDB = db;
+    window.firebaseStorage = storage;
+
+    window.HGS_FIREBASE = {
+      app,
+      auth,
+      db,
+      storage,
+      handleFirestoreError,
+      firebaseConfig
+    };
+  }
+
+  console.log("Firebase initialized successfully:", {
+    app: !!app,
+    auth: !!auth,
+    db: !!db,
+    storage: !!storage
+  });
+} catch (error) {
+  console.error("Firebase initialization failed:", error);
+}
+
+export { app, auth, db, storage };
 
 /**
  * Standard Firestore Error Handler required for security rule diagnostics
@@ -53,6 +87,7 @@ export function handleFirestoreError(error, operationType, path) {
  * Validate Connection to Firestore on startup
  */
 async function testConnection() {
+  if (!db) return;
   try {
     await getDocFromServer(doc(db, "settings", "global_config"));
     console.log("Firebase Firestore Connection Verified.");
@@ -63,15 +98,3 @@ async function testConnection() {
   }
 }
 testConnection();
-
-// Expose globally on window for non-module script compatibility
-if (typeof window !== "undefined") {
-  window.HGS_FIREBASE = {
-    app,
-    auth,
-    db,
-    storage,
-    handleFirestoreError,
-    firebaseConfig
-  };
-}
